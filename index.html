@@ -8,13 +8,14 @@
   <style>
     body { font-family: Arial, sans-serif; background-color: #f8f9fa; }
     .container { margin-top: 50px; }
-    .table { margin-top: 20px; }
     footer { text-align: center; margin-top: 40px; font-size: 0.9em; color: #6c757d; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="text-center">Teacher Routine Manager</h1>
+    <h1 class="text-center">Routine Manager</h1>
+
+    <!-- Form for managing routine -->
     <div class="card mt-4">
       <div class="card-body">
         <h3>Manage Routine</h3>
@@ -57,10 +58,10 @@
           <div class="mb-3">
             <label for="period" class="form-label">Period</label>
             <select class="form-select" id="period" required>
-              <option value="1">Period 1</option>
-              <option value="2">Period 2</option>
-              <option value="3">Period 3</option>
-              <option value="4">Period 4</option>
+              <option value="1">1st Period</option>
+              <option value="2">2nd Period</option>
+              <option value="3">3rd Period</option>
+              <option value="4">4th Period</option>
             </select>
           </div>
           <div class="mb-3">
@@ -76,7 +77,8 @@
         </form>
       </div>
     </div>
-    
+
+    <!-- Routine Table -->
     <table class="table table-bordered table-striped mt-4">
       <thead>
         <tr>
@@ -91,6 +93,7 @@
       <tbody id="routineTable"></tbody>
     </table>
 
+    <!-- Download Button -->
     <button class="btn btn-success" id="downloadPDFButton">Download PDF</button>
 
     <footer>
@@ -98,12 +101,12 @@
     </footer>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
   <script>
     let routines = [];
 
+    // Function to display routines in the table
     function displayRoutines() {
       const tableBody = document.getElementById('routineTable');
       tableBody.innerHTML = '';
@@ -125,6 +128,7 @@
       });
     }
 
+    // Form submission
     document.getElementById('routineForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const teacher = document.getElementById('teacherName').value;
@@ -134,58 +138,44 @@
       const classVal = document.getElementById('class').value;
       const newRoutine = { teacher, subject, day, period, class: classVal };
       
-      if (editIndex !== null) {
-        routines[editIndex] = newRoutine;
-        editIndex = null;
-      } else {
-        routines.push(newRoutine);
-      }
-
+      routines.push(newRoutine);
       document.getElementById('routineForm').reset();
       displayRoutines();
     });
 
+    // Clear all routines
     document.getElementById('clearButton').addEventListener('click', function() {
-      // Reset form and clear the routine list
-      document.getElementById('routineForm').reset();
-      routines = []; // Clear the routines array
-      displayRoutines(); // Update the table to show no routines
+      routines = [];
+      displayRoutines();
     });
 
-    let editIndex = null;
-
-    function editRoutine(index) {
-      const routine = routines[index];
-      document.getElementById('teacherName').value = routine.teacher;
-      document.getElementById('subject').value = routine.subject;
-      document.getElementById('day').value = routine.day;
-      document.getElementById('period').value = routine.period;
-      document.getElementById('class').value = routine.class;
-      editIndex = index;
-    }
-
-    function deleteRoutine(index) {
-      routines.splice(index, 1);
-      displayRoutines();
-    }
-
+    // PDF generation
     document.getElementById('downloadPDFButton').addEventListener('click', function() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      
-      doc.setFont('helvetica');
-      doc.setFontSize(12);
-      doc.text('Teacher Routine', 20, 20);
 
-      // Table headers and rows
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.text('Routine Schedule', 14, 15);
+
+      const columns = ['Teacher', 'Subject', 'Day', 'Period', 'Class'];
+      const rows = routines.map(routine => [
+        routine.teacher,
+        routine.subject,
+        routine.day,
+        routine.period,
+        routine.class,
+      ]);
+
       doc.autoTable({
-        startY: 30,
-        head: [['Teacher', 'Subject', 'Day', 'Period', 'Class']],
-        body: routines.map(routine => [routine.teacher, routine.subject, routine.day, routine.period, routine.class]),
+        startY: 25,
+        head: [columns],
+        body: rows,
+        theme: 'grid',
+        headStyles: { fillColor: [100, 149, 237] },
       });
 
-      // Save the PDF
-      doc.save('routine.pdf');
+      doc.save('Routine_Schedule.pdf');
     });
 
     displayRoutines();
