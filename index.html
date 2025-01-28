@@ -147,7 +147,7 @@
       displayRoutines();
     });
 
-    // Generate PDF
+    // Generate PDF dynamically based on routines
     document.getElementById('downloadPDFButton').addEventListener('click', function () {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -158,35 +158,16 @@
       doc.text('Routine Schedule', 14, 15);
 
       // Columns
-      const columns = [
-        'Class',
-        '1st Period',
-        '2nd Period',
-        'Short Break',
-        '3rd Period',
-        '4th Period',
-        'Tiffin Break',
-        '5th Period',
-        '6th Period',
-        '7th Period'
-      ];
+      const columns = ['Teacher', 'Subject', 'Day', 'Period', 'Class'];
 
-      // Rows for Classes 1 to 12
-      const rows = [];
-      for (let i = 1; i <= 12; i++) {
-        rows.push([
-          `Class ${i}`,
-          'Subject 1',
-          'Subject 2',
-          'Short Break',
-          'Subject 3',
-          'Subject 4',
-          'Tiffin Break',
-          'Subject 5',
-          'Subject 6',
-          'Subject 7'
-        ]);
-      }
+      // Rows from routines
+      const rows = routines.map((routine) => [
+        routine.teacher,
+        routine.subject,
+        routine.day,
+        routine.period,
+        routine.class,
+      ]);
 
       // Generate PDF
       doc.autoTable({
@@ -199,6 +180,24 @@
 
       doc.save('Routine_Schedule.pdf');
     });
+
+    // Delete routine
+    function deleteRoutine(index) {
+      routines.splice(index, 1);
+      displayRoutines();
+    }
+
+    // Edit routine (optional; can implement based on requirement)
+    function editRoutine(index) {
+      const routine = routines[index];
+      document.getElementById('teacherName').value = routine.teacher;
+      document.getElementById('subject').value = routine.subject;
+      document.getElementById('day').value = routine.day;
+      document.getElementById('period').value = routine.period;
+      document.getElementById('class').value = routine.class;
+      routines.splice(index, 1); // Remove the old entry
+      displayRoutines();
+    }
 
     displayRoutines();
   </script>
