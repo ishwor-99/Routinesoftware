@@ -21,6 +21,37 @@
         <h3>Manage Routine</h3>
         <form id="routineForm">
           <div class="mb-3">
+            <label for="class" class="form-label">Class</label>
+            <select class="form-select" id="class" required>
+              <option value="1">Class 1</option>
+              <option value="2">Class 2</option>
+              <option value="3">Class 3</option>
+              <option value="4">Class 4</option>
+              <option value="5">Class 5</option>
+              <option value="6">Class 6</option>
+              <option value="7">Class 7</option>
+              <option value="8">Class 8</option>
+              <option value="9">Class 9</option>
+              <option value="10">Class 10</option>
+              <option value="11">Class 11</option>
+              <option value="12">Class 12</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="period" class="form-label">Period</label>
+            <select class="form-select" id="period" required>
+              <option value="1st Period">1st Period</option>
+              <option value="2nd Period">2nd Period</option>
+              <option value="Short Break">Short Break</option>
+              <option value="3rd Period">3rd Period</option>
+              <option value="4th Period">4th Period</option>
+              <option value="Tiffin Break">Tiffin Break</option>
+              <option value="5th Period">5th Period</option>
+              <option value="6th Period">6th Period</option>
+              <option value="7th Period">7th Period</option>
+            </select>
+          </div>
+          <div class="mb-3">
             <label for="teacherName" class="form-label">Teacher</label>
             <select class="form-select" id="teacherName" required>
               <option value="Ishwor">Ishwor</option>
@@ -44,38 +75,7 @@
               <option value="DBA">DBA</option>
             </select>
           </div>
-          <div class="mb-3">
-            <label for="day" class="form-label">Day</label>
-            <select class="form-select" id="day" required>
-              <option value="Sunday">Sunday</option>
-              <option value="Monday">Monday</option>
-              <option value="Tuesday">Tuesday</option>
-              <option value="Wednesday">Wednesday</option>
-              <option value="Thursday">Thursday</option>
-              <option value="Friday">Friday</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="class" class="form-label">Class</label>
-            <select class="form-select" id="class" required>
-              <option value="8">Class 8</option>
-              <option value="9">Class 9</option>
-              <option value="10">Class 10</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="period" class="form-label">Period</label>
-            <select class="form-select" id="period" required>
-              <option value="1">1st Period</option>
-              <option value="2">2nd Period</option>
-              <option value="3">3rd Period</option>
-              <option value="4">4th Period</option>
-              <option value="5">5th Period</option>
-              <option value="6">6th Period</option>
-              <option value="7">7th Period</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Add Routine</button>
+          <button type="submit" class="btn btn-primary">Add to Routine</button>
           <button type="button" class="btn btn-secondary" id="clearButton">Clear All</button>
         </form>
       </div>
@@ -86,10 +86,9 @@
       <thead>
         <tr>
           <th>Class</th>
+          <th>Period</th>
           <th>Teacher</th>
           <th>Subject</th>
-          <th>Day</th>
-          <th>Period</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -117,10 +116,9 @@
         const row = `
           <tr>
             <td>${routine.class}</td>
+            <td>${routine.period}</td>
             <td>${routine.teacher}</td>
             <td>${routine.subject}</td>
-            <td>${routine.day}</td>
-            <td>${routine.period}</td>
             <td>
               <button class="btn btn-danger" onclick="deleteRoutine(${index})">Delete</button>
             </td>
@@ -133,12 +131,11 @@
     // Add routine
     document.getElementById('routineForm').addEventListener('submit', function (e) {
       e.preventDefault();
+      const classVal = document.getElementById('class').value;
+      const period = document.getElementById('period').value;
       const teacher = document.getElementById('teacherName').value;
       const subject = document.getElementById('subject').value;
-      const day = document.getElementById('day').value;
-      const period = document.getElementById('period').value;
-      const classVal = document.getElementById('class').value;
-      routines.push({ class: classVal, teacher, subject, day, period });
+      routines.push({ class: classVal, period, teacher, subject });
       document.getElementById('routineForm').reset();
       displayRoutines();
     });
@@ -166,16 +163,28 @@
       doc.text('Routine Schedule', 14, 15);
 
       // Columns
-      const columns = ['Class', 'Teacher', 'Subject', 'Day', 'Period'];
+      const columns = [
+        'Class',
+        '1st Period',
+        '2nd Period',
+        'Short Break',
+        '3rd Period',
+        '4th Period',
+        'Tiffin Break',
+        '5th Period',
+        '6th Period',
+        '7th Period',
+      ];
 
       // Rows from routines
-      const rows = routines.map((routine) => [
-        routine.class,
-        routine.teacher,
-        routine.subject,
-        routine.day,
-        routine.period,
-      ]);
+      const rows = [];
+      for (let i = 1; i <= 12; i++) {
+        const row = [i];
+        routines
+          .filter((routine) => parseInt(routine.class) === i)
+          .forEach((routine) => row.push(`${routine.period}: ${routine.teacher} (${routine.subject})`));
+        rows.push(row);
+      }
 
       // Generate table in PDF
       doc.autoTable({
