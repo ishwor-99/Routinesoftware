@@ -1,289 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Routine Manager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-header {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .btn-custom {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .btn-custom:hover {
-            background-color: #0a58ca;
-        }
-
-        footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Routine Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f8f9fa; }
+    .container { margin-top: 50px; }
+    .table { margin-top: 20px; }
+    footer { text-align: center; margin-top: 40px; font-size: 0.9em; color: #6c757d; }
+  </style>
 </head>
-
 <body>
-    <div class="container py-5">
-        <h1 class="text-center mb-4">Routine Manager</h1>
-
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Manage Weekly Routine</h5>
-
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Day</th>
-                                <th>Class</th>
-                                <th>Teacher</th>
-                                <th>Period 1</th>
-                                <th>Period 2</th>
-                                <th>Period 3</th>
-                                <th>Period 4</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="routine-table">
-                            <!-- Rows will be dynamically added here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <button class="btn btn-custom mt-3" data-bs-toggle="modal" data-bs-target="#routineModal">Add Routine</button>
-            </div>
-        </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="routineModal" tabindex="-1" aria-labelledby="routineModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="routineModalLabel">Add/Edit Routine</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="routine-form">
-                            <div class="mb-3">
-                                <label for="day" class="form-label">Day</label>
-                                <select class="form-select" id="day" required>
-                                    <option value="">Select a day</option>
-                                    <option value="Sunday">Sunday</option>
-                                    <option value="Monday">Monday</option>
-                                    <option value="Tuesday">Tuesday</option>
-                                    <option value="Wednesday">Wednesday</option>
-                                    <option value="Thursday">Thursday</option>
-                                    <option value="Friday">Friday</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="class" class="form-label">Class</label>
-                                <select class="form-select" id="class" required>
-                                    <option value="">Select a class</option>
-                                    <option value="8">Class 8</option>
-                                    <option value="9">Class 9</option>
-                                    <option value="10">Class 10</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="teacher" class="form-label">Teacher</label>
-                                <select class="form-select" id="teacher" required>
-                                    <option value="">Select a teacher</option>
-                                    <option value="Ishwor">Ishwor</option>
-                                    <option value="Abin">Abin</option>
-                                    <option value="Lochan">Lochan</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="period1" class="form-label">Period 1</label>
-                                <select class="form-select" id="period1" required>
-                                    <option value="">Select a subject</option>
-                                    <option value="Computer">Computer</option>
-                                    <option value="FCA">FCA</option>
-                                    <option value="CHERM">CHERM</option>
-                                    <option value="WPD">WPD</option>
-                                    <option value="CPRO">CPRO</option>
-                                    <option value="WMAD">WMAD</option>
-                                    <option value="ELECTRO">ELECTRO</option>
-                                    <option value="DBMS">DBMS</option>
-                                    <option value="C++">C++</option>
-                                    <option value="JAVA">JAVA</option>
-                                    <option value="DBA">DBA</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="period2" class="form-label">Period 2</label>
-                                <select class="form-select" id="period2">
-                                    <option value="">Select a subject</option>
-                                    <option value="Computer">Computer</option>
-                                    <option value="FCA">FCA</option>
-                                    <option value="CHERM">CHERM</option>
-                                    <option value="WPD">WPD</option>
-                                    <option value="CPRO">CPRO</option>
-                                    <option value="WMAD">WMAD</option>
-                                    <option value="ELECTRO">ELECTRO</option>
-                                    <option value="DBMS">DBMS</option>
-                                    <option value="C++">C++</option>
-                                    <option value="JAVA">JAVA</option>
-                                    <option value="DBA">DBA</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="period3" class="form-label">Period 3</label>
-                                <select class="form-select" id="period3">
-                                    <option value="">Select a subject</option>
-                                    <option value="Computer">Computer</option>
-                                    <option value="FCA">FCA</option>
-                                    <option value="CHERM">CHERM</option>
-                                    <option value="WPD">WPD</option>
-                                    <option value="CPRO">CPRO</option>
-                                    <option value="WMAD">WMAD</option>
-                                    <option value="ELECTRO">ELECTRO</option>
-                                    <option value="DBMS">DBMS</option>
-                                    <option value="C++">C++</option>
-                                    <option value="JAVA">JAVA</option>
-                                    <option value="DBA">DBA</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="period4" class="form-label">Period 4</label>
-                                <select class="form-select" id="period4">
-                                    <option value="">Select a subject</option>
-                                    <option value="Computer">Computer</option>
-                                    <option value="FCA">FCA</option>
-                                    <option value="CHERM">CHERM</option>
-                                    <option value="WPD">WPD</option>
-                                    <option value="CPRO">CPRO</option>
-                                    <option value="WMAD">WMAD</option>
-                                    <option value="ELECTRO">ELECTRO</option>
-                                    <option value="DBMS">DBMS</option>
-                                    <option value="C++">C++</option>
-                                    <option value="JAVA">JAVA</option>
-                                    <option value="DBA">DBA</option>
-                                </select>
-                            </div>
-
-                            <input type="hidden" id="editing-row-index">
-
-                            <button type="submit" class="btn btn-custom w-100">Save</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <h1 class="text-center">Teacher Routine Manager</h1>
+    <div class="card mt-4">
+      <div class="card-body">
+        <h3>Manage Routine</h3>
+        <form id="routineForm">
+          <div class="mb-3">
+            <label for="teacherName" class="form-label">Teacher</label>
+            <select class="form-select" id="teacherName" required>
+              <option value="Ishwor">Ishwor</option>
+              <option value="Abin">Abin</option>
+              <option value="Lochan">Lochan</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="subject" class="form-label">Subject</label>
+            <select class="form-select" id="subject" required>
+              <option value="Computer">Computer</option>
+              <option value="FCA">FCA</option>
+              <option value="CHERM">CHERM</option>
+              <option value="WPD">WPD</option>
+              <option value="CPRO">CPRO</option>
+              <option value="WMAD">WMAD</option>
+              <option value="Electro">Electro</option>
+              <option value="DBMS">DBMS</option>
+              <option value="C++">C++</option>
+              <option value="JAVA">JAVA</option>
+              <option value="DBA">DBA</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="day" class="form-label">Day</label>
+            <select class="form-select" id="day" required>
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="period" class="form-label">Period</label>
+            <select class="form-select" id="period" required>
+              <option value="1">Period 1</option>
+              <option value="2">Period 2</option>
+              <option value="3">Period 3</option>
+              <option value="4">Period 4</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="class" class="form-label">Class</label>
+            <select class="form-select" id="class" required>
+              <option value="8">Class 8</option>
+              <option value="9">Class 9</option>
+              <option value="10">Class 10</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Routine</button>
+          <button type="button" class="btn btn-secondary" id="clearButton">Clear</button>
+        </form>
+      </div>
     </div>
+    
+    <table class="table table-bordered table-striped mt-4">
+      <thead>
+        <tr>
+          <th>Teacher</th>
+          <th>Subject</th>
+          <th>Day</th>
+          <th>Period</th>
+          <th>Class</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="routineTable"></tbody>
+    </table>
+
+    <button class="btn btn-success" id="downloadPDFButton">Download PDF</button>
 
     <footer>
-        Software developed by Ishwor Bhattarai
+      Software developed by Ishwor Bhattarai
     </footer>
+  </div>
 
-    <script>
-        const routineTable = document.getElementById('routine-table');
-        const routineForm = document.getElementById('routine-form');
-        const dayInput = document.getElementById('day');
-        const classInput = document.getElementById('class');
-        const teacherInput = document.getElementById('teacher');
-        const periodInputs = [
-            document.getElementById('period1'),
-            document.getElementById('period2'),
-            document.getElementById('period3'),
-            document.getElementById('period4')
-        ];
-        const editingRowIndexInput = document.getElementById('editing-row-index');
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    let routines = [];
 
-        let routines = [];
+    function displayRoutines() {
+      const tableBody = document.getElementById('routineTable');
+      tableBody.innerHTML = '';
+      routines.forEach((routine, index) => {
+        const row = `
+          <tr>
+            <td>${routine.teacher}</td>
+            <td>${routine.subject}</td>
+            <td>${routine.day}</td>
+            <td>${routine.period}</td>
+            <td>${routine.class}</td>
+            <td>
+              <button class="btn btn-warning" onclick="editRoutine(${index})">Edit</button>
+              <button class="btn btn-danger" onclick="deleteRoutine(${index})">Delete</button>
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
 
-        function renderTable() {
-            routineTable.innerHTML = routines.map((routine, index) => `
-                <tr>
-                    <td>${routine.day}</td>
-                    <td>${routine.class}</td>
-                    <td>${routine.teacher}</td>
-                    <td>${routine.period1 || ''}</td>
-                    <td>${routine.period2 || ''}</td>
-                    <td>${routine.period3 || ''}</td>
-                    <td>${routine.period4 || ''}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="editRoutine(${index})">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteRoutine(${index})">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+    document.getElementById('routineForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const teacher = document.getElementById('teacherName').value;
+      const subject = document.getElementById('subject').value;
+      const day = document.getElementById('day').value;
+      const period = document.getElementById('period').value;
+      const classVal = document.getElementById('class').value;
+      const newRoutine = { teacher, subject, day, period, class: classVal };
+      
+      if (editIndex !== null) {
+        routines[editIndex] = newRoutine;
+        editIndex = null;
+      } else {
+        routines.push(newRoutine);
+      }
 
-        routineForm.addEventListener('submit', function (event) {
-            event.preventDefault();
+      document.getElementById('routineForm').reset();
+      displayRoutines();
+    });
 
-            const day = dayInput.value;
-            const classValue = classInput.value;
-            const teacher = teacherInput.value;
-            const periods = periodInputs.map(input => input.value);
-            const editingIndex = editingRowIndexInput.value;
+    document.getElementById('clearButton').addEventListener('click', function() {
+      // Reset form and clear the routine list
+      document.getElementById('routineForm').reset();
+      routines = []; // Clear the routines array
+      displayRoutines(); // Update the table to show no routines
+    });
 
-            const newRoutine = {
-                day,
-                class: classValue,
-                teacher,
-                period1: periods[0],
-                period2: periods[1],
-                period3: periods[2],
-                period4: periods[3]
-            };
+    let editIndex = null;
 
-            if (editingIndex) {
-                routines[editingIndex] = newRoutine;
-            } else {
-                routines.push(newRoutine);
-            }
+    function editRoutine(index) {
+      const routine = routines[index];
+      document.getElementById('teacherName').value = routine.teacher;
+      document.getElementById('subject').value = routine.subject;
+      document.getElementById('day').value = routine.day;
+      document.getElementById('period').value = routine.period;
+      document.getElementById('class').value = routine.class;
+      editIndex = index;
+    }
 
-            renderTable();
-            routineForm.reset();
-            editingRowIndexInput.value = '';
-            bootstrap.Modal.getInstance(document.getElementById('routineModal')).hide();
-        });
+    function deleteRoutine(index) {
+      routines.splice(index, 1);
+      displayRoutines();
+    }
 
-        function editRoutine(index) {
-            const routine = routines[index];
-            dayInput.value = routine.day;
-            classInput.value = routine.class;
-            teacherInput.value = routine.teacher;
-            periodInputs.forEach((input, i) => input.value = routine[`period${i + 1}`] || '');
-            editingRowIndexInput.value = index;
-            const modal = new bootstrap.Modal(document.getElementById('routineModal'));
-            modal.show();
-        }
+    document.getElementById('downloadPDFButton').addEventListener('click', function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-        function deleteRoutine(index) {
-            routines.splice(index, 1);
-            renderTable();
-        }
+      doc.setFont('helvetica');
+      doc.setFontSize(12);
+      doc.text('Teacher Routine', 20, 20);
 
-        renderTable();
-    </script>
+      // Table headers
+      doc.autoTable({
+        startY: 30,
+        head: [['Teacher', 'Subject', 'Day', 'Period', 'Class']],
+        body: routines.map(routine => [routine.teacher, routine.subject, routine.day, routine.period, routine.class]),
+      });
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      doc.save('routine.pdf');
+    });
+
+    displayRoutines();
+  </script>
 </body>
-
 </html>
