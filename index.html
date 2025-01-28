@@ -56,15 +56,6 @@
             </select>
           </div>
           <div class="mb-3">
-            <label for="period" class="form-label">Period</label>
-            <select class="form-select" id="period" required>
-              <option value="1">1st Period</option>
-              <option value="2">2nd Period</option>
-              <option value="3">3rd Period</option>
-              <option value="4">4th Period</option>
-            </select>
-          </div>
-          <div class="mb-3">
             <label for="class" class="form-label">Class</label>
             <select class="form-select" id="class" required>
               <option value="8">Class 8</option>
@@ -72,8 +63,20 @@
               <option value="10">Class 10</option>
             </select>
           </div>
+          <div class="mb-3">
+            <label for="period" class="form-label">Period</label>
+            <select class="form-select" id="period" required>
+              <option value="1">1st Period</option>
+              <option value="2">2nd Period</option>
+              <option value="3">3rd Period</option>
+              <option value="4">4th Period</option>
+              <option value="5">5th Period</option>
+              <option value="6">6th Period</option>
+              <option value="7">7th Period</option>
+            </select>
+          </div>
           <button type="submit" class="btn btn-primary">Add Routine</button>
-          <button type="button" class="btn btn-secondary" id="clearButton">Clear</button>
+          <button type="button" class="btn btn-secondary" id="clearButton">Clear All</button>
         </form>
       </div>
     </div>
@@ -82,11 +85,11 @@
     <table class="table table-bordered table-striped mt-4">
       <thead>
         <tr>
+          <th>Class</th>
           <th>Teacher</th>
           <th>Subject</th>
           <th>Day</th>
           <th>Period</th>
-          <th>Class</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -113,13 +116,12 @@
       routines.forEach((routine, index) => {
         const row = `
           <tr>
+            <td>${routine.class}</td>
             <td>${routine.teacher}</td>
             <td>${routine.subject}</td>
             <td>${routine.day}</td>
             <td>${routine.period}</td>
-            <td>${routine.class}</td>
             <td>
-              <button class="btn btn-warning" onclick="editRoutine(${index})">Edit</button>
               <button class="btn btn-danger" onclick="deleteRoutine(${index})">Delete</button>
             </td>
           </tr>
@@ -136,7 +138,7 @@
       const day = document.getElementById('day').value;
       const period = document.getElementById('period').value;
       const classVal = document.getElementById('class').value;
-      routines.push({ teacher, subject, day, period, class: classVal });
+      routines.push({ class: classVal, teacher, subject, day, period });
       document.getElementById('routineForm').reset();
       displayRoutines();
     });
@@ -147,7 +149,13 @@
       displayRoutines();
     });
 
-    // Generate PDF dynamically based on routines
+    // Delete routine
+    function deleteRoutine(index) {
+      routines.splice(index, 1);
+      displayRoutines();
+    }
+
+    // Generate PDF
     document.getElementById('downloadPDFButton').addEventListener('click', function () {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -158,18 +166,18 @@
       doc.text('Routine Schedule', 14, 15);
 
       // Columns
-      const columns = ['Teacher', 'Subject', 'Day', 'Period', 'Class'];
+      const columns = ['Class', 'Teacher', 'Subject', 'Day', 'Period'];
 
       // Rows from routines
       const rows = routines.map((routine) => [
+        routine.class,
         routine.teacher,
         routine.subject,
         routine.day,
         routine.period,
-        routine.class,
       ]);
 
-      // Generate PDF
+      // Generate table in PDF
       doc.autoTable({
         startY: 25,
         head: [columns],
@@ -180,24 +188,6 @@
 
       doc.save('Routine_Schedule.pdf');
     });
-
-    // Delete routine
-    function deleteRoutine(index) {
-      routines.splice(index, 1);
-      displayRoutines();
-    }
-
-    // Edit routine (optional; can implement based on requirement)
-    function editRoutine(index) {
-      const routine = routines[index];
-      document.getElementById('teacherName').value = routine.teacher;
-      document.getElementById('subject').value = routine.subject;
-      document.getElementById('day').value = routine.day;
-      document.getElementById('period').value = routine.period;
-      document.getElementById('class').value = routine.class;
-      routines.splice(index, 1); // Remove the old entry
-      displayRoutines();
-    }
 
     displayRoutines();
   </script>
