@@ -172,7 +172,7 @@
     document.getElementById('downloadPDFButton').addEventListener('click', function() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-
+      
       doc.setFont('helvetica');
       doc.setFontSize(12);
       doc.text('Teacher Routine', 20, 20);
@@ -184,7 +184,7 @@
         body: routines.map(routine => [routine.teacher, routine.subject, routine.day, routine.period, routine.class]),
       });
 
-      // Download the generated PDF
+      // Save the PDF
       doc.save('routine.pdf');
     });
 
