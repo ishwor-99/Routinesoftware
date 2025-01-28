@@ -94,7 +94,7 @@
     </table>
 
     <!-- Download Button -->
-    <button class="btn btn-success" id="downloadPDFButton">Download PDF</button>
+    <button class="btn btn-success" id="downloadPDFButton">Download Routine PDF</button>
 
     <footer>
       Software developed by Ishwor Bhattarai
@@ -106,7 +106,7 @@
   <script>
     let routines = [];
 
-    // Function to display routines in the table
+    // Display routines in the table
     function displayRoutines() {
       const tableBody = document.getElementById('routineTable');
       tableBody.innerHTML = '';
@@ -128,45 +128,67 @@
       });
     }
 
-    // Form submission
-    document.getElementById('routineForm').addEventListener('submit', function(e) {
+    // Add routine
+    document.getElementById('routineForm').addEventListener('submit', function (e) {
       e.preventDefault();
       const teacher = document.getElementById('teacherName').value;
       const subject = document.getElementById('subject').value;
       const day = document.getElementById('day').value;
       const period = document.getElementById('period').value;
       const classVal = document.getElementById('class').value;
-      const newRoutine = { teacher, subject, day, period, class: classVal };
-      
-      routines.push(newRoutine);
+      routines.push({ teacher, subject, day, period, class: classVal });
       document.getElementById('routineForm').reset();
       displayRoutines();
     });
 
     // Clear all routines
-    document.getElementById('clearButton').addEventListener('click', function() {
+    document.getElementById('clearButton').addEventListener('click', function () {
       routines = [];
       displayRoutines();
     });
 
-    // PDF generation
-    document.getElementById('downloadPDFButton').addEventListener('click', function() {
+    // Generate PDF
+    document.getElementById('downloadPDFButton').addEventListener('click', function () {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
+      // Title
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(16);
       doc.text('Routine Schedule', 14, 15);
 
-      const columns = ['Teacher', 'Subject', 'Day', 'Period', 'Class'];
-      const rows = routines.map(routine => [
-        routine.teacher,
-        routine.subject,
-        routine.day,
-        routine.period,
-        routine.class,
-      ]);
+      // Columns
+      const columns = [
+        'Class',
+        '1st Period',
+        '2nd Period',
+        'Short Break',
+        '3rd Period',
+        '4th Period',
+        'Tiffin Break',
+        '5th Period',
+        '6th Period',
+        '7th Period'
+      ];
 
+      // Rows for Classes 1 to 12
+      const rows = [];
+      for (let i = 1; i <= 12; i++) {
+        rows.push([
+          `Class ${i}`,
+          'Subject 1',
+          'Subject 2',
+          'Short Break',
+          'Subject 3',
+          'Subject 4',
+          'Tiffin Break',
+          'Subject 5',
+          'Subject 6',
+          'Subject 7'
+        ]);
+      }
+
+      // Generate PDF
       doc.autoTable({
         startY: 25,
         head: [columns],
