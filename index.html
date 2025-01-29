@@ -18,16 +18,12 @@
         .teacher-item:hover {
             background-color: #f0f0f0;
         }
-        .period-table th, .period-table td {
-            padding: 8px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <h2>Routine Manager</h2>
-        
+
         <form id="routineForm">
             <!-- Class Selection Dropdown -->
             <div class="mb-3">
@@ -41,11 +37,11 @@
                 </select>
             </div>
 
-            <!-- Class Teacher Selection Dropdown -->
+            <!-- Teacher Selection Dropdown -->
             <div class="mb-3">
-                <label for="classTeacherSelect" class="form-label">Assign Class Teacher</label>
-                <select id="classTeacherSelect" class="form-select">
-                    <option value="">Select Class Teacher</option>
+                <label for="teacherSelect" class="form-label">Select Teacher</label>
+                <select id="teacherSelect" class="form-select">
+                    <option value="">Select Teacher</option>
                     <option value="Ishwor sir">Ishwor sir</option>
                     <option value="Abin sir">Abin sir</option>
                     <option value="Lochan sir">Lochan sir</option>
@@ -59,24 +55,38 @@
                 </select>
             </div>
 
-            <!-- Teacher and Subject Selection -->
+            <!-- Subject Selection Dropdown -->
             <div class="mb-3">
-                <label for="teacherSelect" class="form-label">Select Teacher</label>
-                <select id="teacherSelect" class="form-select">
-                    <option value="">Select Teacher</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="subject" class="form-label">Assign Subject</label>
-                <select id="subject" class="form-select">
+                <label for="subjectSelect" class="form-label">Assign Subject</label>
+                <select id="subjectSelect" class="form-select">
                     <option value="">Select Subject</option>
+                    <option value="Cmath">Cmath</option>
+                    <option value="Omath">Omath</option>
+                    <option value="Nepali">Nepali</option>
+                    <option value="English">English</option>
+                    <option value="Social">Social</option>
+                    <option value="Java">Java</option>
+                    <option value="Fca">Fca</option>
+                    <option value="Cherm">Cherm</option>
+                    <option value="Dbms">Dbms</option>
+                    <option value="Electro">Electro</option>
+                    <option value="Cpro">Cpro</option>
+                    <option value="Vpro">Vpro</option>
+                    <option value="Cn">Cn</option>
+                    <option value="Science">Science</option>
+                    <option value="Dba">Dba</option>
+                    <option value="Ct">Ct</option>
+                    <option value="Oop">Oop</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Computer">Computer</option>
                 </select>
             </div>
 
+            <!-- Period Selection -->
             <div class="mb-3">
-                <label for="period" class="form-label">Select Period (1-7)</label>
-                <select id="period" class="form-select">
+                <label for="periodSelect" class="form-label">Select Period (1-7)</label>
+                <select id="periodSelect" class="form-select">
                     <option value="">Select Period</option>
                     <option value="1">Period 1</option>
                     <option value="2">Period 2</option>
@@ -108,126 +118,60 @@
     </div>
 
     <script>
-        const teachers = ["Ishwor sir", "Abin sir", "Lochan sir", "Jhalanath sir", "Pradip sir", "Manish sir", "Arun sir", "Cp sir", "Deepa mam", "Ymd sir"];
-        const subjects = ["Cmath", "Omath", "Nepali", "English", "Social", "Java", "Fca", "Cherm", "Dbms", "Electro", "Cpro", "Vpro", "Cn", "Science", "Dba", "Ct", "Oop", "Physics", "Chemistry", "Computer"];
-        const periodTimes = [
-            "10:20 AM - 11:00 AM",
-            "11:00 AM - 11:40 AM",
-            "11:50 AM - 12:30 PM",
-            "12:30 PM - 1:10 PM",
-            "1:50 PM - 2:30 PM",
-            "2:30 PM - 3:10 PM",
-            "3:10 PM - 3:50 PM"
-        ];
+        const { jsPDF } = window.jspdf;
 
+        // Array to hold the routine data
         let routineData = [];
 
-        const classSelect = document.getElementById("classSelect");
-        const classTeacherSelect = document.getElementById("classTeacherSelect");
-        const teacherSelect = document.getElementById("teacherSelect");
-        const subjectSelect = document.getElementById("subject");
-        const periodSelect = document.getElementById("period");
+        // Form elements
+        const form = document.getElementById("routineForm");
         const routineTable = document.querySelector("#routineTable tbody");
 
-        // Populate Teacher Dropdown
-        teachers.forEach(teacher => {
-            let option = document.createElement("option");
-            option.value = teacher;
-            option.textContent = teacher;
-            teacherSelect.appendChild(option);
-        });
-
-        // Populate Subject List
-        subjects.forEach(sub => {
-            let option = document.createElement("option");
-            option.value = sub;
-            option.textContent = sub;
-            subjectSelect.appendChild(option);
-        });
-
-        // Handle Form Submission
-        document.getElementById("routineForm").addEventListener("submit", function(event) {
+        // Handle form submission
+        form.addEventListener("submit", function(event) {
             event.preventDefault();
-            const teacher = teacherSelect.value;
-            const subject = subjectSelect.value;
-            const period = periodSelect.value;
-            const selectedClass = classSelect.value;
 
+            // Get data from form
+            const selectedClass = document.getElementById("classSelect").value;
+            const teacher = document.getElementById("teacherSelect").value;
+            const subject = document.getElementById("subjectSelect").value;
+            const period = document.getElementById("periodSelect").value;
+
+            // Validate form
             if (!selectedClass || !teacher || !subject || !period) {
                 alert("Please fill in all fields.");
                 return;
             }
 
-            // Add to routineData array
-            routineData.push({
-                class: selectedClass,
-                teacher: teacher,
-                period: period,
-                subject: subject
-            });
+            // Add data to routine array
+            routineData.push({ selectedClass, teacher, subject, period });
 
-            // Add to table
-            let row = routineTable.insertRow();
+            // Add row to the table
+            const row = routineTable.insertRow();
             row.insertCell(0).textContent = selectedClass;
             row.insertCell(1).textContent = teacher;
             row.insertCell(2).textContent = `Period ${period}`;
             row.insertCell(3).textContent = subject;
 
-            // Show download PDF button if routine is populated
-            document.getElementById("downloadPDF").style.display = "block"; 
+            // Show download button if data exists
+            document.getElementById("downloadPDF").style.display = "block";
         });
 
-        // Download Routine as PDF
+        // Download PDF functionality
         document.getElementById("downloadPDF").addEventListener("click", function() {
-            const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-
             doc.setFontSize(16);
-            doc.text("Routine Manager - Final Schedule", 20, 20);
+            doc.text("Routine Manager - Class Schedule", 20, 20);
 
-            const periods = ["Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Period 6", "Period 7"];
-            const breaks = ["", "Short Break", "", "Tiffin Break", "", "", ""];
-
-            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
+            // Generate table for PDF
             let yPos = 30;
-
-            // Loop through each day and create the routine table
-            daysOfWeek.forEach((day) => {
-                doc.setFontSize(14);
-                doc.text(day, 20, yPos); // Day header
-                yPos += 10;
-
-                let tableHeaders = ['Class', ...periods];
-                doc.autoTable({
-                    head: [tableHeaders],
-                    body: [],
-                    startY: yPos,
-                    theme: 'grid',
-                    headStyles: { fillColor: [0, 0, 0] },
-                    styles: { fontSize: 10 },
-                });
-
-                // Populate routine for each class
-                let classList = ['9', '10', '11', '12']; // Sample classes
-                classList.forEach((classItem, index) => {
-                    let row = [classItem];
-                    for (let i = 0; i < 7; i++) {
-                        const routineForPeriod = routineData.find(r => r.class === classItem && r.period == (i + 1));
-                        row.push(routineForPeriod ? `${routineForPeriod.subject} (${routineForPeriod.teacher})` : breaks[i]);
-                    }
-                    doc.autoTable({
-                        body: [row],
-                        startY: yPos + 10 + (index * 10),
-                        theme: 'grid',
-                        styles: { fontSize: 10 },
-                    });
-                });
-
-                yPos += 40;  // Add space after each day
+            routineData.forEach(data => {
+                doc.text(`${data.selectedClass} | ${data.teacher} | Period ${data.period} | ${data.subject}`, 20, yPos);
+                yPos += 10; // Add space for next row
             });
 
-            doc.save("routine_manager_schedule.pdf");
+            // Save PDF
+            doc.save("routine_schedule.pdf");
         });
     </script>
 </body>
