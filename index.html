@@ -18,6 +18,10 @@
         .teacher-item:hover {
             background-color: #f0f0f0;
         }
+        .period-table th, .period-table td {
+            padding: 8px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -122,6 +126,7 @@
         let classTeacher = '';
         let classTeacherSubjects = [];
         let selectedClass = '';
+        let routineData = [];
 
         const classSelect = document.getElementById("classSelect");
         const classTeacherSelect = document.getElementById("classTeacherSelect");
@@ -220,6 +225,15 @@
 
             teacherSubjects[teacher].push(subject);
 
+            // Add to routineData array
+            routineData.push({
+                class: selectedClass,
+                teacher: teacher,
+                period: period,
+                time: periodTimes[period - 1],
+                subject: subject
+            });
+
             // Add to table
             let row = routineTable.insertRow();
             row.insertCell(0).textContent = selectedClass;
@@ -261,22 +275,11 @@
                 yPos += 10;
 
                 // Filter rows for the specific day
-                let rowsForDay = [];
-                routineTable.querySelectorAll("tr").forEach(row => {
-                    const cols = row.querySelectorAll("td");
-                    if (cols.length === 6 && cols[0].textContent.includes(day)) {
-                        rowsForDay.push(row);
-                    }
-                });
+                let rowsForDay = routineData.filter(row => row.day === day);
 
                 if (rowsForDay.length > 0) {
-                    doc.setFontSize(12);
-                    doc.text("Class | Teacher | Period | Time | Subject", 20, yPos);
-                    yPos += 10;
-
                     rowsForDay.forEach(row => {
-                        const cols = row.querySelectorAll("td");
-                        let text = `${cols[0].textContent} | ${cols[1].textContent} | ${cols[2].textContent} | ${cols[3].textContent} | ${cols[4].textContent}`;
+                        let text = `${row.class} | ${row.teacher} | ${row.period} | ${row.time} | ${row.subject}`;
                         doc.text(text, 20, yPos);
                         yPos += 10;
                     });
