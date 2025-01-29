@@ -1,200 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Routine Manager</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f8f9fa; }
-    .container { margin-top: 50px; }
-    footer { text-align: center; margin-top: 40px; font-size: 0.9em; color: #6c757d; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routine Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        .teacher-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .teacher-item {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .teacher-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="text-center">Routine Manager</h1>
-
-    <!-- Form for managing routine -->
-    <div class="card mt-4">
-      <div class="card-body">
-        <h3>Manage Routine</h3>
+    <div class="container mt-5">
+        <h2>Routine Manager</h2>
+        
         <form id="routineForm">
-          <div class="mb-3">
-            <label for="class" class="form-label">Class</label>
-            <select class="form-select" id="class" required>
-              <option value="1">Class 1</option>
-              <option value="2">Class 2</option>
-              <option value="3">Class 3</option>
-              <option value="4">Class 4</option>
-              <option value="5">Class 5</option>
-              <option value="6">Class 6</option>
-              <option value="7">Class 7</option>
-              <option value="8">Class 8</option>
-              <option value="9">Class 9</option>
-              <option value="10">Class 10</option>
-              <option value="11">Class 11</option>
-              <option value="12">Class 12</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="period" class="form-label">Period</label>
-            <select class="form-select" id="period" required>
-              <option value="1st Period">1st Period</option>
-              <option value="2nd Period">2nd Period</option>
-              <option value="Short Break">Short Break</option>
-              <option value="3rd Period">3rd Period</option>
-              <option value="4th Period">4th Period</option>
-              <option value="Tiffin Break">Tiffin Break</option>
-              <option value="5th Period">5th Period</option>
-              <option value="6th Period">6th Period</option>
-              <option value="7th Period">7th Period</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="teacherName" class="form-label">Teacher</label>
-            <select class="form-select" id="teacherName" required>
-              <option value="Ishwor">Ishwor</option>
-              <option value="Abin">Abin</option>
-              <option value="Lochan">Lochan</option>
-              <option value="Pradip sir">Pradip sir</option>
-              <option value="Jhalnath sir">Jhalnath sir</option>
-              <option value="Manish sir">Manish sir</option>
-              <option value="Arun sir">Arun sir</option>
-              <option value="CP sir">CP sir</option>
-              <option value="HariBhakta sir">HariBhakta sir</option>
-              <option value="YMD sir">YMD sir</option>
-              <option value="Lila sir">Lila sir</option>
-              <option value="Taranath sir">Taranath sir</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="subject" class="form-label">Subject</label>
-            <select class="form-select" id="subject" required>
-              <option value="Computer">Computer</option>
-              <option value="FCA">FCA</option>
-              <option value="CHERM">CHERM</option>
-              <option value="WPD">WPD</option>
-              <option value="CPRO">CPRO</option>
-              <option value="WMAD">WMAD</option>
-              <option value="Electro">Electro</option>
-              <option value="DBMS">DBMS</option>
-              <option value="C++">C++</option>
-              <option value="JAVA">JAVA</option>
-              <option value="DBA">DBA</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Add to Routine</button>
-          <button type="button" class="btn btn-secondary" id="clearButton">Clear All</button>
+            <div class="mb-3">
+                <label for="classTeacherSelect" class="form-label">Assign Class Teacher</label>
+                <select id="classTeacherSelect" class="form-select">
+                    <option value="">Select Class Teacher</option>
+                    <option value="Ishwor sir">Ishwor sir</option>
+                    <option value="Abin sir">Abin sir</option>
+                    <option value="Lochan sir">Lochan sir</option>
+                    <option value="Jhalanath sir">Jhalanath sir</option>
+                    <option value="Pradip sir">Pradip sir</option>
+                    <option value="Manish sir">Manish sir</option>
+                    <option value="Arun sir">Arun sir</option>
+                    <option value="Cp sir">Cp sir</option>
+                    <option value="Deepa mam">Deepa mam</option>
+                    <option value="Ymd sir">Ymd sir</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="teacherSelect" class="form-label">Select Teacher</label>
+                <select id="teacherSelect" class="form-select">
+                    <option value="">Select Teacher</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="subject" class="form-label">Assign Subject</label>
+                <select id="subject" class="form-select">
+                    <option value="">Select Subject</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="period" class="form-label">Select Period (1-7)</label>
+                <select id="period" class="form-select">
+                    <option value="">Select Period</option>
+                    <option value="1">Period 1</option>
+                    <option value="2">Period 2</option>
+                    <option value="3">Period 3</option>
+                    <option value="4">Period 4</option>
+                    <option value="5">Period 5</option>
+                    <option value="6">Period 6</option>
+                    <option value="7">Period 7</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add to Routine</button>
         </form>
-      </div>
+
+        <h3 class="mt-4">Generated Routine</h3>
+        <table class="table table-bordered mt-3" id="routineTable">
+            <thead>
+                <tr>
+                    <th>Teacher</th>
+                    <th>Period</th>
+                    <th>Time</th>
+                    <th>Subject</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <button type="button" id="downloadPDF" class="btn btn-success mt-3" style="display: none;">Download PDF</button>
     </div>
 
-    <!-- Download Button -->
-    <button class="btn btn-success mt-3" id="downloadPDFButton">Download Routine PDF</button>
+    <script>
+        const teachers = ["Ishwor sir", "Abin sir", "Lochan sir", "Jhalanath sir", "Pradip sir", "Manish sir", "Arun sir", "Cp sir", "Deepa mam", "Ymd sir"];
+        const subjects = ["Cmath", "Omath", "Nepali", "English", "Social", "Java", "Fca", "Cherm", "Dbms", "Electro", "Cpro", "Vpro", "Cn", "Science", "Dba", "Ct", "Oop", "Physics", "Chemistry", "Computer"];
+        const periodTimes = [
+            "10:20 AM - 11:00 AM",
+            "11:00 AM - 11:40 AM",
+            "11:50 AM - 12:30 PM",
+            "12:30 PM - 1:10 PM",
+            "1:50 PM - 2:30 PM",
+            "2:30 PM - 3:10 PM",
+            "3:10 PM - 3:50 PM"
+        ];
 
-    <footer>
-      Software developed by Ishwor Bhattarai
-    </footer>
-  </div>
+        let teacherSubjects = {}; 
+        let classTeacher = '';
+        let classTeacherSubjects = [];
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-  <script>
-    const routineData = {}; // Object to store routine by class and period
+        const classTeacherSelect = document.getElementById("classTeacherSelect");
+        const teacherSelect = document.getElementById("teacherSelect");
+        const subjectSelect = document.getElementById("subject");
+        const periodSelect = document.getElementById("period");
+        const routineTable = document.querySelector("#routineTable tbody");
 
-    // Add routine
-    document.getElementById("routineForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+        // Populate Teacher Dropdown
+        teachers.forEach(teacher => {
+            let option = document.createElement("option");
+            option.value = teacher;
+            option.textContent = teacher;
+            teacherSelect.appendChild(option);
+        });
 
-      const classValue = document.getElementById("class").value;
-      const period = document.getElementById("period").value;
-      const teacher = document.getElementById("teacherName").value;
-      const subject = document.getElementById("subject").value;
+        // Populate Subject List
+        subjects.forEach(sub => {
+            let option = document.createElement("option");
+            option.value = sub;
+            option.textContent = sub;
+            subjectSelect.appendChild(option);
+        });
 
-      // Initialize class in routineData if not present
-      if (!routineData[classValue]) {
-        routineData[classValue] = {
-          "1st Period": "",
-          "2nd Period": "",
-          "Short Break": "",
-          "3rd Period": "",
-          "4th Period": "",
-          "Tiffin Break": "",
-          "5th Period": "",
-          "6th Period": "",
-          "7th Period": "",
-        };
-      }
+        // Handle Class Teacher Selection
+        classTeacherSelect.addEventListener("change", function() {
+            classTeacher = classTeacherSelect.value;
 
-      // Add data to the respective period
-      routineData[classValue][period] = `${teacher} (${subject})`;
+            // Set class teacher subjects to first 24 subjects
+            classTeacherSubjects = subjects.slice(0, 24);
+            
+            // Update subject list to show only class teacher's subjects
+            updateSubjectList();
+        });
 
-      document.getElementById("routineForm").reset();
-      alert("Routine updated successfully!");
-    });
+        // Handle Teacher Selection for Other Teachers
+        teacherSelect.addEventListener("change", function() {
+            const teacher = teacherSelect.value;
 
-    // Clear all routines
-    document.getElementById("clearButton").addEventListener("click", function () {
-      for (const key in routineData) {
-        delete routineData[key];
-      }
-      alert("All routines cleared!");
-    });
+            // If a teacher is selected, ensure they can only be assigned subjects that aren't already assigned to them
+            if (!teacherSubjects[teacher]) {
+                teacherSubjects[teacher] = [];
+            }
+        });
 
-    // Generate PDF
-    document.getElementById("downloadPDFButton").addEventListener("click", function () {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+        // Update the subject list based on class teacher selection
+        function updateSubjectList() {
+            subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+            classTeacherSubjects.forEach(sub => {
+                let option = document.createElement("option");
+                option.value = sub;
+                option.textContent = sub;
+                subjectSelect.appendChild(option);
+            });
+        }
 
-      // Title
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(16);
-      doc.text("Routine Schedule", 14, 15);
+        // Handle Form Submission
+        document.getElementById("routineForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const teacher = teacherSelect.value;
+            const subject = subjectSelect.value;
+            const period = periodSelect.value;
 
-      // Columns
-      const columns = [
-        "Class",
-        "1st Period",
-        "2nd Period",
-        "Short Break",
-        "3rd Period",
-        "4th Period",
-        "Tiffin Break",
-        "5th Period",
-        "6th Period",
-        "7th Period",
-      ];
+            if (!teacher || !subject || !period) {
+                alert("Please fill in all fields.");
+                return;
+            }
 
-      // Rows
-      const rows = [];
-      for (let i = 1; i <= 12; i++) {
-        const classData = routineData[i] || {};
-        rows.push([
-          `Class ${i}`,
-          classData["1st Period"] || "",
-          classData["2nd Period"] || "",
-          classData["Short Break"] || "",
-          classData["3rd Period"] || "",
-          classData["4th Period"] || "",
-          classData["Tiffin Break"] || "",
-          classData["5th Period"] || "",
-          classData["6th Period"] || "",
-          classData["7th Period"] || "",
-        ]);
-      }
+            // If class teacher, restrict subjects to only class teacher's subjects
+            if (teacher === classTeacher && !classTeacherSubjects.includes(subject)) {
+                alert("Class teacher can only be assigned subjects from the 24 subjects.");
+                return;
+            }
 
-      // Generate table
-      doc.autoTable({
-        startY: 25,
-        head: [columns],
-        body: rows,
-        theme: "grid",
-        headStyles: { fillColor: [100, 149, 237] },
-      });
+            if (!teacherSubjects[teacher]) {
+                teacherSubjects[teacher] = [];
+            }
 
-      doc.save("Routine_Schedule.pdf");
-    });
-  </script>
+            if (teacherSubjects[teacher].includes(subject)) {
+                alert("This subject is already assigned to the selected teacher!");
+                return;
+            }
+
+            teacherSubjects[teacher].push(subject);
+
+            // Add to table
+            let row = routineTable.insertRow();
+            row.insertCell(0).textContent = teacher;
+            row.insertCell(1).textContent = `Period ${period}`;
+            row.insertCell(2).textContent = periodTimes[period - 1];
+            row.insertCell(3).textContent = subject;
+
+            let actionCell = row.insertCell(4);
+            let deleteButton = document.createElement("button");
+            deleteButton.textContent = "Remove";
+            deleteButton.className = "btn btn-danger btn-sm";
+            deleteButton.onclick = function () {
+                row.remove();
+            };
+            actionCell.appendChild(deleteButton);
+
+            // Show download PDF button if routine is populated
+            document.getElementById("downloadPDF").style.display = "block"; 
+        });
+
+        // Download Routine as PDF
+        document.getElementById("downloadPDF").addEventListener("click", function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(16);
+            doc.text("Routine Manager - Final Schedule", 20, 20);
+
+            // Days of the week
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+            
+            let yPos = 40;
+
+            // Loop through each day and list the routines for that day
+            daysOfWeek.forEach((day) => {
+                doc.setFontSize(14);
+                doc.text(day, 20, yPos); // Day header
+                yPos += 10;
+
+                // Filter rows for the specific day
+                let rowsForDay = [];
+                routineTable.querySelectorAll("tr").forEach(row => {
+                    const cols = row.querySelectorAll("td");
+                    if (cols.length === 4 && cols[1].textContent.includes(day)) {
+                        rowsForDay.push(row);
+                    }
+                });
+
+                if (rowsForDay.length > 0) {
+                    doc.setFontSize(12);
+                    doc.text("Teacher | Period | Time | Subject", 20, yPos);
+                    yPos += 10;
+
+                    rowsForDay.forEach(row => {
+                        const cols = row.querySelectorAll("td");
+                        let text = `${cols[0].textContent} | ${cols[1].textContent} | ${cols[2].textContent} | ${cols[3].textContent}`;
+                        doc.text(text, 20, yPos);
+                        yPos += 10;
+                    });
+                } else {
+                    doc.setFontSize(12);
+                    doc.text("No classes scheduled for this day.", 20, yPos);
+                    yPos += 10;
+                }
+
+                // Add spacing between days
+                yPos += 10;
+            });
+
+            doc.save("Routine_Schedule.pdf");
+        });
+    </script>
 </body>
 </html>
