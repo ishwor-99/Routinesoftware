@@ -150,6 +150,13 @@
         classSelect.addEventListener("change", function() {
             selectedClass = classSelect.value;
             // After class selection, show related teacher assignments
+            if (selectedClass) {
+                // Enable Class Teacher selection if a class is selected
+                classTeacherSelect.disabled = false;
+            } else {
+                // Disable Class Teacher selection if no class is selected
+                classTeacherSelect.disabled = true;
+            }
         });
 
         // Handle Class Teacher Selection
@@ -163,16 +170,6 @@
             updateSubjectList();
         });
 
-        // Handle Teacher Selection for Other Teachers
-        teacherSelect.addEventListener("change", function() {
-            const teacher = teacherSelect.value;
-
-            // If a teacher is selected, ensure they can only be assigned subjects that aren't already assigned to them
-            if (!teacherSubjects[teacher]) {
-                teacherSubjects[teacher] = [];
-            }
-        });
-
         // Update the subject list based on class teacher selection
         function updateSubjectList() {
             subjectSelect.innerHTML = '<option value="">Select Subject</option>';
@@ -183,6 +180,16 @@
                 subjectSelect.appendChild(option);
             });
         }
+
+        // Handle Teacher Selection for Other Teachers
+        teacherSelect.addEventListener("change", function() {
+            const teacher = teacherSelect.value;
+
+            // If a teacher is selected, ensure they can only be assigned subjects that aren't already assigned to them
+            if (!teacherSubjects[teacher]) {
+                teacherSubjects[teacher] = [];
+            }
+        });
 
         // Handle Form Submission
         document.getElementById("routineForm").addEventListener("submit", function(event) {
