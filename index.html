@@ -185,11 +185,9 @@
             doc.setFontSize(16);
             doc.text("Routine Manager - Final Schedule", 20, 20);
 
-            // Define Periods and Breaks
             const periods = ["Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Period 6", "Period 7"];
             const breaks = ["", "Short Break", "", "Tiffin Break", "", "", ""];
 
-            // Days of the week
             const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
             let yPos = 30;
@@ -200,8 +198,6 @@
                 doc.text(day, 20, yPos); // Day header
                 yPos += 10;
 
-                // Table header for periods
-                doc.setFontSize(12);
                 let tableHeaders = ['Class', ...periods];
                 doc.autoTable({
                     head: [tableHeaders],
@@ -217,7 +213,6 @@
                 classList.forEach((classItem, index) => {
                     let row = [classItem];
                     for (let i = 0; i < 7; i++) {
-                        // Find the matching data for each period
                         const routineForPeriod = routineData.find(r => r.class === classItem && r.period == (i + 1));
                         row.push(routineForPeriod ? `${routineForPeriod.subject} (${routineForPeriod.teacher})` : breaks[i]);
                     }
@@ -232,7 +227,6 @@
                 yPos += 40;  // Add space after each day
             });
 
-            // Save the generated PDF
             doc.save("routine_manager_schedule.pdf");
         });
     </script>
