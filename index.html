@@ -98,9 +98,7 @@
                     <th>Class</th>
                     <th>Teacher</th>
                     <th>Period</th>
-                    <th>Time</th>
                     <th>Subject</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -122,10 +120,6 @@
             "3:10 PM - 3:50 PM"
         ];
 
-        let teacherSubjects = {}; 
-        let classTeacher = '';
-        let classTeacherSubjects = [];
-        let selectedClass = '';
         let routineData = [];
 
         const classSelect = document.getElementById("classSelect");
@@ -151,86 +145,24 @@
             subjectSelect.appendChild(option);
         });
 
-        // Handle Class Selection
-        classSelect.addEventListener("change", function() {
-            selectedClass = classSelect.value;
-            // After class selection, show related teacher assignments
-            if (selectedClass) {
-                // Enable Class Teacher selection if a class is selected
-                classTeacherSelect.disabled = false;
-            } else {
-                // Disable Class Teacher selection if no class is selected
-                classTeacherSelect.disabled = true;
-            }
-        });
-
-        // Handle Class Teacher Selection
-        classTeacherSelect.addEventListener("change", function() {
-            classTeacher = classTeacherSelect.value;
-
-            // Set class teacher subjects to first 24 subjects
-            classTeacherSubjects = subjects.slice(0, 24);
-            
-            // Update subject list to show only class teacher's subjects
-            updateSubjectList();
-        });
-
-        // Update the subject list based on class teacher selection
-        function updateSubjectList() {
-            subjectSelect.innerHTML = '<option value="">Select Subject</option>';
-            classTeacherSubjects.forEach(sub => {
-                let option = document.createElement("option");
-                option.value = sub;
-                option.textContent = sub;
-                subjectSelect.appendChild(option);
-            });
-        }
-
-        // Handle Teacher Selection for Other Teachers
-        teacherSelect.addEventListener("change", function() {
-            const teacher = teacherSelect.value;
-
-            // If a teacher is selected, ensure they can only be assigned subjects that aren't already assigned to them
-            if (!teacherSubjects[teacher]) {
-                teacherSubjects[teacher] = [];
-            }
-        });
-
         // Handle Form Submission
         document.getElementById("routineForm").addEventListener("submit", function(event) {
             event.preventDefault();
             const teacher = teacherSelect.value;
             const subject = subjectSelect.value;
             const period = periodSelect.value;
+            const selectedClass = classSelect.value;
 
             if (!selectedClass || !teacher || !subject || !period) {
                 alert("Please fill in all fields.");
                 return;
             }
 
-            // If class teacher, restrict subjects to only class teacher's subjects
-            if (teacher === classTeacher && !classTeacherSubjects.includes(subject)) {
-                alert("Class teacher can only be assigned subjects from the 24 subjects.");
-                return;
-            }
-
-            if (!teacherSubjects[teacher]) {
-                teacherSubjects[teacher] = [];
-            }
-
-            if (teacherSubjects[teacher].includes(subject)) {
-                alert("This subject is already assigned to the selected teacher!");
-                return;
-            }
-
-            teacherSubjects[teacher].push(subject);
-
             // Add to routineData array
             routineData.push({
                 class: selectedClass,
                 teacher: teacher,
                 period: period,
-                time: periodTimes[period - 1],
                 subject: subject
             });
 
@@ -239,17 +171,7 @@
             row.insertCell(0).textContent = selectedClass;
             row.insertCell(1).textContent = teacher;
             row.insertCell(2).textContent = `Period ${period}`;
-            row.insertCell(3).textContent = periodTimes[period - 1];
-            row.insertCell(4).textContent = subject;
-
-            let actionCell = row.insertCell(5);
-            let deleteButton = document.createElement("button");
-            deleteButton.textContent = "Remove";
-            deleteButton.className = "btn btn-danger btn-sm";
-            deleteButton.onclick = function () {
-                row.remove();
-            };
-            actionCell.appendChild(deleteButton);
+            row.insertCell(3).textContent = subject;
 
             // Show download PDF button if routine is populated
             document.getElementById("downloadPDF").style.display = "block"; 
@@ -263,33 +185,51 @@
             doc.setFontSize(16);
             doc.text("Routine Manager - Final Schedule", 20, 20);
 
+            // Define Periods and Breaks
+            const periods = ["Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Period 6", "Period 7"];
+            const breaks = ["", "Short Break", "", "Tiffin Break", "", "", ""];
+
             // Days of the week
             const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-            
-            let yPos = 40;
 
-            // Loop through each day and list the routines for that day
+            let yPos = 30;
+            
+            // Loop through each day and create the routine table
             daysOfWeek.forEach((day) => {
                 doc.setFontSize(14);
                 doc.text(day, 20, yPos); // Day header
                 yPos += 10;
 
-                // Filter rows for the specific day
-                let rowsForDay = routineData.filter(row => row.day === day);
+                // Table header for periods
+                doc.setFontSize(12);
+                let tableHeaders = ['Class', ...periods];
+                doc.autoTable({
+                    head: [tableHeaders],
+                    body: [],
+                    startY: yPos,
+                    theme: 'grid',
+                    headStyles: { fillColor: [0, 0, 0] },
+                    styles: { fontSize: 10 },
+                });
 
-                if (rowsForDay.length > 0) {
-                    rowsForDay.forEach(row => {
-                        let text = `${row.class} | ${row.teacher} | ${row.period} | ${row.time} | ${row.subject}`;
-                        doc.text(text, 20, yPos);
-                        yPos += 10;
+                // Populate routine for each class
+                let classList = ['9', '10', '11', '12']; // Sample classes
+                classList.forEach((classItem, index) => {
+                    let row = [classItem];
+                    for (let i = 0; i < 7; i++) {
+                        // Find the matching data for each period
+                        const routineForPeriod = routineData.find(r => r.class === classItem && r.period == (i + 1));
+                        row.push(routineForPeriod ? `${routineForPeriod.subject} (${routineForPeriod.teacher})` : breaks[i]);
+                    }
+                    doc.autoTable({
+                        body: [row],
+                        startY: yPos + 10 + (index * 10),
+                        theme: 'grid',
+                        styles: { fontSize: 10 },
                     });
-                } else {
-                    doc.setFontSize(12);
-                    doc.text("No routine found.", 20, yPos);
-                    yPos += 10;
-                }
+                });
 
-                yPos += 10;  // Add space after each day
+                yPos += 40;  // Add space after each day
             });
 
             // Save the generated PDF
