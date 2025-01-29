@@ -25,6 +25,19 @@
         <h2>Routine Manager</h2>
         
         <form id="routineForm">
+            <!-- Class Selection Dropdown -->
+            <div class="mb-3">
+                <label for="classSelect" class="form-label">Select Class</label>
+                <select id="classSelect" class="form-select">
+                    <option value="">Select Class</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                </select>
+            </div>
+
+            <!-- Class Teacher Selection Dropdown -->
             <div class="mb-3">
                 <label for="classTeacherSelect" class="form-label">Assign Class Teacher</label>
                 <select id="classTeacherSelect" class="form-select">
@@ -42,6 +55,7 @@
                 </select>
             </div>
 
+            <!-- Teacher and Subject Selection -->
             <div class="mb-3">
                 <label for="teacherSelect" class="form-label">Select Teacher</label>
                 <select id="teacherSelect" class="form-select">
@@ -77,6 +91,7 @@
         <table class="table table-bordered mt-3" id="routineTable">
             <thead>
                 <tr>
+                    <th>Class</th>
                     <th>Teacher</th>
                     <th>Period</th>
                     <th>Time</th>
@@ -106,7 +121,9 @@
         let teacherSubjects = {}; 
         let classTeacher = '';
         let classTeacherSubjects = [];
+        let selectedClass = '';
 
+        const classSelect = document.getElementById("classSelect");
         const classTeacherSelect = document.getElementById("classTeacherSelect");
         const teacherSelect = document.getElementById("teacherSelect");
         const subjectSelect = document.getElementById("subject");
@@ -127,6 +144,12 @@
             option.value = sub;
             option.textContent = sub;
             subjectSelect.appendChild(option);
+        });
+
+        // Handle Class Selection
+        classSelect.addEventListener("change", function() {
+            selectedClass = classSelect.value;
+            // After class selection, show related teacher assignments
         });
 
         // Handle Class Teacher Selection
@@ -168,7 +191,7 @@
             const subject = subjectSelect.value;
             const period = periodSelect.value;
 
-            if (!teacher || !subject || !period) {
+            if (!selectedClass || !teacher || !subject || !period) {
                 alert("Please fill in all fields.");
                 return;
             }
@@ -192,12 +215,13 @@
 
             // Add to table
             let row = routineTable.insertRow();
-            row.insertCell(0).textContent = teacher;
-            row.insertCell(1).textContent = `Period ${period}`;
-            row.insertCell(2).textContent = periodTimes[period - 1];
-            row.insertCell(3).textContent = subject;
+            row.insertCell(0).textContent = selectedClass;
+            row.insertCell(1).textContent = teacher;
+            row.insertCell(2).textContent = `Period ${period}`;
+            row.insertCell(3).textContent = periodTimes[period - 1];
+            row.insertCell(4).textContent = subject;
 
-            let actionCell = row.insertCell(4);
+            let actionCell = row.insertCell(5);
             let deleteButton = document.createElement("button");
             deleteButton.textContent = "Remove";
             deleteButton.className = "btn btn-danger btn-sm";
@@ -233,33 +257,33 @@
                 let rowsForDay = [];
                 routineTable.querySelectorAll("tr").forEach(row => {
                     const cols = row.querySelectorAll("td");
-                    if (cols.length === 4 && cols[1].textContent.includes(day)) {
+                    if (cols.length === 6 && cols[0].textContent.includes(day)) {
                         rowsForDay.push(row);
                     }
                 });
 
                 if (rowsForDay.length > 0) {
                     doc.setFontSize(12);
-                    doc.text("Teacher | Period | Time | Subject", 20, yPos);
+                    doc.text("Class | Teacher | Period | Time | Subject", 20, yPos);
                     yPos += 10;
 
                     rowsForDay.forEach(row => {
                         const cols = row.querySelectorAll("td");
-                        let text = `${cols[0].textContent} | ${cols[1].textContent} | ${cols[2].textContent} | ${cols[3].textContent}`;
+                        let text = `${cols[0].textContent} | ${cols[1].textContent} | ${cols[2].textContent} | ${cols[3].textContent} | ${cols[4].textContent}`;
                         doc.text(text, 20, yPos);
                         yPos += 10;
                     });
                 } else {
                     doc.setFontSize(12);
-                    doc.text("No classes scheduled for this day.", 20, yPos);
+                    doc.text("No routine found.", 20, yPos);
                     yPos += 10;
                 }
 
-                // Add spacing between days
-                yPos += 10;
+                yPos += 10;  // Add space after each day
             });
 
-            doc.save("Routine_Schedule.pdf");
+            // Save the generated PDF
+            doc.save("routine_manager_schedule.pdf");
         });
     </script>
 </body>
