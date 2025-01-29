@@ -7,16 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        .teacher-list {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .teacher-item {
-            padding: 5px;
-            cursor: pointer;
-        }
-        .teacher-item:hover {
-            background-color: #f0f0f0;
+        .container {
+            max-width: 900px;
+            margin: auto;
         }
     </style>
 </head>
@@ -24,11 +17,11 @@
     <div class="container mt-5">
         <h2>Routine Manager</h2>
 
+        <!-- Routine Form -->
         <form id="routineForm">
-            <!-- Class Selection Dropdown -->
             <div class="mb-3">
                 <label for="classSelect" class="form-label">Select Class</label>
-                <select id="classSelect" class="form-select">
+                <select id="classSelect" class="form-select" required>
                     <option value="">Select Class</option>
                     <option value="9">Class 9</option>
                     <option value="10">Class 10</option>
@@ -37,10 +30,9 @@
                 </select>
             </div>
 
-            <!-- Teacher Selection Dropdown -->
             <div class="mb-3">
                 <label for="teacherSelect" class="form-label">Select Teacher</label>
-                <select id="teacherSelect" class="form-select">
+                <select id="teacherSelect" class="form-select" required>
                     <option value="">Select Teacher</option>
                     <option value="Ishwor sir">Ishwor sir</option>
                     <option value="Abin sir">Abin sir</option>
@@ -55,10 +47,9 @@
                 </select>
             </div>
 
-            <!-- Subject Selection Dropdown -->
             <div class="mb-3">
-                <label for="subjectSelect" class="form-label">Assign Subject</label>
-                <select id="subjectSelect" class="form-select">
+                <label for="subjectSelect" class="form-label">Select Subject</label>
+                <select id="subjectSelect" class="form-select" required>
                     <option value="">Select Subject</option>
                     <option value="Cmath">Cmath</option>
                     <option value="Omath">Omath</option>
@@ -83,10 +74,9 @@
                 </select>
             </div>
 
-            <!-- Period Selection -->
             <div class="mb-3">
                 <label for="periodSelect" class="form-label">Select Period (1-7)</label>
-                <select id="periodSelect" class="form-select">
+                <select id="periodSelect" class="form-select" required>
                     <option value="">Select Period</option>
                     <option value="1">Period 1</option>
                     <option value="2">Period 2</option>
@@ -101,6 +91,7 @@
             <button type="submit" class="btn btn-primary">Add to Routine</button>
         </form>
 
+        <!-- Routine Display Table -->
         <h3 class="mt-4">Generated Routine</h3>
         <table class="table table-bordered mt-3" id="routineTable">
             <thead>
@@ -114,46 +105,44 @@
             <tbody></tbody>
         </table>
 
+        <!-- PDF Download Button -->
         <button type="button" id="downloadPDF" class="btn btn-success mt-3" style="display: none;">Download PDF</button>
     </div>
 
     <script>
         const { jsPDF } = window.jspdf;
 
-        // Array to hold the routine data
         let routineData = [];
 
-        // Form elements
-        const form = document.getElementById("routineForm");
-        const routineTable = document.querySelector("#routineTable tbody");
-
         // Handle form submission
-        form.addEventListener("submit", function(event) {
+        document.getElementById("routineForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
-            // Get data from form
             const selectedClass = document.getElementById("classSelect").value;
             const teacher = document.getElementById("teacherSelect").value;
             const subject = document.getElementById("subjectSelect").value;
             const period = document.getElementById("periodSelect").value;
 
-            // Validate form
+            // Basic form validation
             if (!selectedClass || !teacher || !subject || !period) {
                 alert("Please fill in all fields.");
                 return;
             }
 
-            // Add data to routine array
+            // Add data to the routine array
             routineData.push({ selectedClass, teacher, subject, period });
 
-            // Add row to the table
-            const row = routineTable.insertRow();
-            row.insertCell(0).textContent = selectedClass;
-            row.insertCell(1).textContent = teacher;
-            row.insertCell(2).textContent = `Period ${period}`;
-            row.insertCell(3).textContent = subject;
+            // Update the table
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${selectedClass}</td>
+                <td>${teacher}</td>
+                <td>Period ${period}</td>
+                <td>${subject}</td>
+            `;
+            document.querySelector("#routineTable tbody").appendChild(row);
 
-            // Show download button if data exists
+            // Show the "Download PDF" button
             document.getElementById("downloadPDF").style.display = "block";
         });
 
@@ -163,14 +152,12 @@
             doc.setFontSize(16);
             doc.text("Routine Manager - Class Schedule", 20, 20);
 
-            // Generate table for PDF
             let yPos = 30;
             routineData.forEach(data => {
                 doc.text(`${data.selectedClass} | ${data.teacher} | Period ${data.period} | ${data.subject}`, 20, yPos);
-                yPos += 10; // Add space for next row
+                yPos += 10;
             });
 
-            // Save PDF
             doc.save("routine_schedule.pdf");
         });
     </script>
