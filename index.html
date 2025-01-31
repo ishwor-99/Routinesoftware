@@ -3,163 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Routine Manager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>School Routine Manager</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        .container {
-            max-width: 900px;
-            margin: auto;
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
         }
+        th, td {
+            padding: 10px;
+        }
+        .conflict {
+            background-color: #ffcccc;
+        }
+        .break {
+            background-color: lightgray;
+        }
+        .day-btn.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .subject-math { background-color: #FFD700; }
+        .subject-science { background-color: #90EE90; }
+        .subject-english { background-color: #87CEEB; }
+        .subject-social { background-color: #FFB6C1; }
+        .subject-computer { background-color: #DDA0DD; }
     </style>
 </head>
-<body>
-    <div class="container mt-5">
-        <h2>Routine Manager</h2>
+<body class="container mt-4">
 
-        <!-- Routine Form -->
-        <form id="routineForm">
-            <div class="mb-3">
-                <label for="classSelect" class="form-label">Select Class</label>
-                <select id="classSelect" class="form-select" required>
-                    <option value="">Select Class</option>
-                    <option value="9">Class 9</option>
-                    <option value="10">Class 10</option>
-                    <option value="11">Class 11</option>
-                    <option value="12">Class 12</option>
-                </select>
-            </div>
+    <h2 class="text-center mb-4">School Routine Manager</h2>
 
-            <div class="mb-3">
-                <label for="teacherSelect" class="form-label">Select Teacher</label>
-                <select id="teacherSelect" class="form-select" required>
-                    <option value="">Select Teacher</option>
-                    <option value="Ishwor sir">Ishwor sir</option>
-                    <option value="Abin sir">Abin sir</option>
-                    <option value="Lochan sir">Lochan sir</option>
-                    <option value="Jhalanath sir">Jhalanath sir</option>
-                    <option value="Pradip sir">Pradip sir</option>
-                    <option value="Manish sir">Manish sir</option>
-                    <option value="Arun sir">Arun sir</option>
-                    <option value="Cp sir">Cp sir</option>
-                    <option value="Deepa mam">Deepa mam</option>
-                    <option value="Ymd sir">Ymd sir</option>
-                </select>
-            </div>
+    <!-- Day Selection Buttons -->
+    <div class="btn-group mb-3">
+        <button class="btn btn-outline-primary day-btn active" onclick="switchDay('Sunday')">Sunday</button>
+        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Monday')">Monday</button>
+        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Tuesday')">Tuesday</button>
+        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Wednesday')">Wednesday</button>
+        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Thursday')">Thursday</button>
+        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Friday')">Friday</button>
+    </div>
 
-            <div class="mb-3">
-                <label for="subjectSelect" class="form-label">Select Subject</label>
-                <select id="subjectSelect" class="form-select" required>
-                    <option value="">Select Subject</option>
-                    <option value="Cmath">Cmath</option>
-                    <option value="Omath">Omath</option>
-                    <option value="Nepali">Nepali</option>
-                    <option value="English">English</option>
-                    <option value="Social">Social</option>
-                    <option value="Java">Java</option>
-                    <option value="Fca">Fca</option>
-                    <option value="Cherm">Cherm</option>
-                    <option value="Dbms">Dbms</option>
-                    <option value="Electro">Electro</option>
-                    <option value="Cpro">Cpro</option>
-                    <option value="Vpro">Vpro</option>
-                    <option value="Cn">Cn</option>
-                    <option value="Science">Science</option>
-                    <option value="Dba">Dba</option>
-                    <option value="Ct">Ct</option>
-                    <option value="Oop">Oop</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Chemistry">Chemistry</option>
-                    <option value="Computer">Computer</option>
-                </select>
-            </div>
+    <!-- Form Controls -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label for="teacher" class="form-label">Teacher:</label>
+            <select id="teacher" class="form-select">
+                <option value="T1">T1</option>
+                <option value="T2">T2</option>
+                <option value="T3">T3</option>
+                <option value="T4">T4</option>
+                <option value="T5">T5</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="subject" class="form-label">Subject:</label>
+            <select id="subject" class="form-select">
+                <option value="Math">Math</option>
+                <option value="Science">Science</option>
+                <option value="English">English</option>
+                <option value="Social">Social</option>
+                <option value="Computer">Computer</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="class" class="form-label">Class:</label>
+            <select id="class" class="form-select">
+                <script>
+                    for(let i=1; i<=12; i++) {
+                        document.write(`<option value="${i}">Class ${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="period" class="form-label">Period:</label>
+            <select id="period" class="form-select"></select>
+        </div>
+    </div>
 
-            <div class="mb-3">
-                <label for="periodSelect" class="form-label">Select Period (1-7)</label>
-                <select id="periodSelect" class="form-select" required>
-                    <option value="">Select Period</option>
-                    <option value="1">Period 1</option>
-                    <option value="2">Period 2</option>
-                    <option value="3">Period 3</option>
-                    <option value="4">Period 4</option>
-                    <option value="5">Period 5</option>
-                    <option value="6">Period 6</option>
-                    <option value="7">Period 7</option>
-                </select>
-            </div>
+    <!-- Action Buttons -->
+    <div class="mb-3">
+        <button class="btn btn-primary" onclick="addToRoutine()">Add to Routine</button>
+        <button class="btn btn-warning" onclick="resetRoutine()">Reset Current Day</button>
+        <button class="btn btn-success" onclick="saveRoutine()">Save All Routines</button>
+        <button class="btn btn-info" onclick="exportRoutine()">Export All</button>
+        <input type="file" id="importFile" class="d-none" accept=".json">
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import</button>
+    </div>
 
-            <button type="submit" class="btn btn-primary">Add to Routine</button>
-        </form>
+    <!-- Routine Table -->
+    <h3 id="currentDayHeading" class="mt-4">Sunday Routine</h3>
+    <table class="table table-bordered">
+        <thead id="tableHeader">
+            <tr>
+                <th>Class</th>
+                <th>Period 1</th>
+                <th>Period 2</th>
+                <th>Short Break</th>
+                <th>Period 3</th>
+                <th>Period 4</th>
+                <th>Lunch Break</th>
+                <th>Period 5</th>
+                <th>Period 6</th>
+                <th>Period 7</th>
+            </tr>
+        </thead>
+        <tbody id="routineBody">
+            <!-- Dynamic content will be inserted here -->
+        </tbody>
+    </table>
 
-        <!-- Routine Display Table -->
-        <h3 class="mt-4">Generated Routine</h3>
-        <table class="table table-bordered mt-3" id="routineTable">
-            <thead>
-                <tr>
-                    <th>Class</th>
-                    <th>Teacher</th>
-                    <th>Period</th>
-                    <th>Subject</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <!-- PDF Download Button -->
-        <button type="button" id="downloadPDF" class="btn btn-success mt-3" style="display: none;">Download PDF</button>
+    <!-- Context Menu -->
+    <div id="contextMenu" class="dropdown-menu">
+        <button class="dropdown-item" onclick="handleEdit()">Edit</button>
+        <button class="dropdown-item" onclick="handleDelete()">Delete</button>
     </div>
 
     <script>
-        const { jsPDF } = window.jspdf;
+        let currentDay = 'Sunday';
+        let selectedCell = null;
 
-        let routineData = [];
+        function switchDay(day) {
+            currentDay = day;
+            // Update button styles
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === day) btn.classList.add('active');
+            });
+            // Update heading
+            document.getElementById('currentDayHeading').textContent = `${day} Routine`;
+            // Update period options
+            updatePeriodOptions();
+            // Rebuild table structure
+            rebuildTableStructure();
+            // Load the routine for the selected day
+            loadRoutine();
+        }
 
-        // Handle form submission
-        document.getElementById("routineForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+        function updatePeriodOptions() {
+            const periodSelect = document.getElementById('period');
+            periodSelect.innerHTML = '';
+            const periods = currentDay === 'Friday' ? 5 : 7;
+            
+            for(let i=1; i<=periods; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Period ${i}`;
+                periodSelect.appendChild(option);
+            }
+        }
 
-            const selectedClass = document.getElementById("classSelect").value;
-            const teacher = document.getElementById("teacherSelect").value;
-            const subject = document.getElementById("subjectSelect").value;
-            const period = document.getElementById("periodSelect").value;
+        function rebuildTableStructure() {
+            const isFriday = currentDay === 'Friday';
+            const thead = document.querySelector('#tableHeader');
+            const tbody = document.querySelector('#routineBody');
 
-            // Basic form validation
-            if (!selectedClass || !teacher || !subject || !period) {
-                alert("Please fill in all fields.");
+            // Update table headers
+            thead.innerHTML = `
+                <tr>
+                    <th>Class</th>
+                    <th>Period 1</th>
+                    <th>Period 2</th>
+                    <th>Short Break</th>
+                    ${isFriday ? `
+                        <th>Period 3</th>
+                        <th>Period 4</th>
+                        <th>Period 5</th>
+                    ` : `
+                        <th>Period 3</th>
+                        <th>Period 4</th>
+                        <th>Lunch Break</th>
+                        <th>Period 5</th>
+                        <th>Period 6</th>
+                        <th>Period 7</th>
+                    `}
+                </tr>
+            `;
+
+            // Rebuild table body
+            tbody.innerHTML = '';
+            for(let i=1; i<=12; i++) {
+                const row = document.createElement('tr');
+                row.id = `class-${i}`;
+                row.innerHTML = `
+                    <td>Class ${i}</td>
+                    ${Array.from({length: isFriday ? 7 : 9}, (_, index) => {
+                        if(isFriday) {
+                            return index === 3 ? 
+                                '<td class="break">Short Break</td>' : 
+                                `<td id="class-${i}-${index < 3 ? index+1 : index}"></td>`;
+                        }
+                        return index === 3 ? 
+                            '<td class="break">Short Break</td>' : 
+                            index === 6 ? 
+                            '<td class="break">Lunch Break</td>' : 
+                            `<td id="class-${i}-${index < 6 ? index+1 : index-1}"></td>`;
+                    }).join('')}
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function addToRoutine() {
+            const teacher = document.getElementById("teacher").value;
+            const subject = document.getElementById("subject").value;
+            const classNumber = document.getElementById("class").value;
+            const period = document.getElementById("period").value;
+
+            if(currentDay === 'Friday' && parseInt(period) > 5) {
+                alert("Friday only has 5 periods!");
                 return;
             }
 
-            // Add data to the routine array
-            routineData.push({ selectedClass, teacher, subject, period });
+            const cellId = `class-${classNumber}-${period}`;
+            const cell = document.getElementById(cellId);
 
-            // Update the table
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${selectedClass}</td>
-                <td>${teacher}</td>
-                <td>Period ${period}</td>
-                <td>${subject}</td>
-            `;
-            document.querySelector("#routineTable tbody").appendChild(row);
+            if (!cell) {
+                alert("Invalid period selection!");
+                return;
+            }
 
-            // Show the "Download PDF" button
-            document.getElementById("downloadPDF").style.display = "block";
-        });
+            if (cell.innerHTML !== "") {
+                alert("This period is already assigned!");
+                return;
+            }
 
-        // Download PDF functionality
-        document.getElementById("downloadPDF").addEventListener("click", function() {
-            const doc = new jsPDF();
-            doc.setFontSize(16);
-            doc.text("Routine Manager - Class Schedule", 20, 20);
+            if (checkTeacherConflict(teacher, period)) {
+                alert(`Conflict: Teacher ${teacher} is already assigned during this period!`);
+                return;
+            }
 
-            let yPos = 30;
-            routineData.forEach(data => {
-                doc.text(`${data.selectedClass} | ${data.teacher} | Period ${data.period} | ${data.subject}`, 20, yPos);
-                yPos += 10;
+            cell.innerHTML = `<b>${teacher}</b><br>${subject}`;
+            cell.className = `subject-${subject.toLowerCase()}`;
+            cell.setAttribute("data-teacher", teacher);
+            cell.setAttribute("data-subject", subject);
+            cell.setAttribute("onclick", `editEntry('${cellId}')`);
+            
+            highlightConflicts(teacher);
+        }
+
+        function checkTeacherConflict(teacher, period) {
+            let conflict = false;
+            document.querySelectorAll(`[data-teacher="${teacher}"]`).forEach(cell => {
+                const cellPeriod = cell.id.split('-')[2];
+                if (cellPeriod === period) conflict = true;
             });
+            return conflict;
+        }
 
-            doc.save("routine_schedule.pdf");
+        function editEntry(cellId) {
+            const cell = document.getElementById(cellId);
+            const teacher = cell.getAttribute("data-teacher");
+            const subject = cell.getAttribute("data-subject");
+
+            const newTeacher = prompt("Edit Teacher:", teacher);
+            const newSubject = prompt("Edit Subject:", subject);
+
+            if (newTeacher && newSubject) {
+                cell.innerHTML = `<b>${newTeacher}</b><br>${newSubject}`;
+                cell.className = `subject-${newSubject.toLowerCase()}`;
+                cell.setAttribute("data-teacher", newTeacher);
+                cell.setAttribute("data-subject", newSubject);
+                highlightConflicts(newTeacher);
+            }
+        }
+
+        function resetRoutine() {
+            if (confirm("Reset current day's routine?")) {
+                const maxPeriod = currentDay === 'Friday' ? 5 : 7;
+                for (let i = 1; i <= 12; i++) {
+                    for (let j = 1; j <= maxPeriod; j++) {
+                        const cell = document.getElementById(`class-${i}-${j}`);
+                        if (cell) {
+                            cell.innerHTML = "";
+                            cell.removeAttribute("data-teacher");
+                            cell.removeAttribute("data-subject");
+                            cell.className = '';
+                        }
+                    }
+                }
+            }
+        }
+
+        function saveRoutine() {
+            const allRoutines = JSON.parse(localStorage.getItem("routines")) || {};
+            const routine = {};
+            const maxPeriod = currentDay === 'Friday' ? 5 : 7;
+
+            for (let i = 1; i <= 12; i++) {
+                routine[`Class ${i}`] = {};
+                for (let j = 1; j <= maxPeriod; j++) {
+                    const cell = document.getElementById(`class-${i}-${j}`);
+                    if (cell && cell.innerHTML !== "") {
+                        routine[`Class ${i}`][`Period ${j}`] = {
+                            teacher: cell.getAttribute("data-teacher"),
+                            subject: cell.getAttribute("data-subject")
+                        };
+                    }
+                }
+            }
+
+            allRoutines[currentDay] = routine;
+            localStorage.setItem("routines", JSON.stringify(allRoutines));
+            alert(`${currentDay} routine saved!`);
+        }
+
+        function loadRoutine() {
+            const allRoutines = JSON.parse(localStorage.getItem("routines")) || {};
+            const routine = allRoutines[currentDay] || {};
+            const maxPeriod = currentDay === 'Friday' ? 5 : 7;
+
+            for (let i = 1; i <= 12; i++) {
+                for (let j = 1; j <= maxPeriod; j++) {
+                    const cell = document.getElementById(`class-${i}-${j}`);
+                    if (!cell) continue;
+                    
+                    const periodData = routine[`Class ${i}`]?.[`Period ${j}`];
+                    if (periodData) {
+                        cell.innerHTML = `<b>${periodData.teacher}</b><br>${periodData.subject}`;
+                        cell.className = `subject-${periodData.subject.toLowerCase()}`;
+                        cell.setAttribute("data-teacher", periodData.teacher);
+                        cell.setAttribute("data-subject", periodData.subject);
+                    } else {
+                        cell.innerHTML = "";
+                        cell.className = '';
+                        cell.removeAttribute("data-teacher");
+                        cell.removeAttribute("data-subject");
+                    }
+                }
+            }
+        }
+
+        // Context Menu Functions
+        document.addEventListener('contextmenu', (e) => {
+            if (e.target.tagName === 'TD' && e.target.id.startsWith('class-')) {
+                e.preventDefault();
+                selectedCell = e.target;
+                const menu = document.getElementById('contextMenu');
+                menu.style.display = 'block';
+                menu.style.left = `${e.pageX}px`;
+                menu.style.top = `${e.pageY}px`;
+            }
         });
+
+        function handleEdit() {
+            if (selectedCell) editEntry(selectedCell.id);
+            hideMenu();
+        }
+
+        function handleDelete() {
+            if (selectedCell) {
+                selectedCell.innerHTML = '';
+                selectedCell.removeAttribute("data-teacher");
+                selectedCell.removeAttribute("data-subject");
+                selectedCell.className = '';
+                highlightConflicts('');
+            }
+            hideMenu();
+        }
+
+        function hideMenu() {
+            document.getElementById('contextMenu').style.display = 'none';
+            selectedCell = null;
+        }
+
+        // Export/Import Functions
+        function exportRoutine() {
+            const routines = localStorage.getItem("routines");
+            const dataStr = JSON.stringify(JSON.parse(routines), null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'all_routines.json';
+            link.click();
+        }
+
+        document.getElementById('importFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                localStorage.setItem("routines", e.target.result);
+                loadRoutine();
+                alert('All routines imported successfully!');
+            };
+            reader.readAsText(file);
+        });
+
+        function highlightConflicts(teacher) {
+            document.querySelectorAll('[data-teacher]').forEach(cell => {
+                cell.classList.remove('conflict');
+                if (cell.getAttribute('data-teacher') === teacher) {
+                    cell.classList.add('conflict');
+                }
+            });
+        }
+
+        // Initialize on first load
+        window.onload = () => {
+            updatePeriodOptions();
+            rebuildTableStructure();
+            loadRoutine();
+        };
     </script>
+
 </body>
 </html>
