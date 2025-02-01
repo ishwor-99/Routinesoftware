@@ -98,15 +98,7 @@
         <thead id="tableHeader">
             <tr>
                 <th>Class</th>
-                <th>Period 1</th>
-                <th>Period 2</th>
-                <th>Short Break</th>
-                <th>Period 3</th>
-                <th>Period 4</th>
-                <th>Lunch Break</th>
-                <th>Period 5</th>
-                <th>Period 6</th>
-                <th>Period 7</th>
+                <!-- Dynamic headers will be inserted here -->
             </tr>
         </thead>
         <tbody id="routineBody">
@@ -126,18 +118,13 @@
 
         function switchDay(day) {
             currentDay = day;
-            // Update button styles
             document.querySelectorAll('.day-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent === day) btn.classList.add('active');
+                btn.textContent === day && btn.classList.add('active');
             });
-            // Update heading
             document.getElementById('currentDayHeading').textContent = `${day} Routine`;
-            // Update period options
             updatePeriodOptions();
-            // Rebuild table structure
             rebuildTableStructure();
-            // Load the routine for the selected day
             loadRoutine();
         }
 
@@ -159,7 +146,7 @@
             const thead = document.querySelector('#tableHeader');
             const tbody = document.querySelector('#routineBody');
 
-            // Update table headers
+            // Build headers
             thead.innerHTML = `
                 <tr>
                     <th>Class</th>
@@ -181,24 +168,26 @@
                 </tr>
             `;
 
-            // Rebuild table body
+            // Build body
             tbody.innerHTML = '';
-            for(let i=1; i<=12; i++) {
+            for(let classNum=1; classNum<=12; classNum++) {
                 const row = document.createElement('tr');
-                row.id = `class-${i}`;
+                row.id = `class-${classNum}`;
                 row.innerHTML = `
-                    <td>Class ${i}</td>
-                    ${Array.from({length: isFriday ? 7 : 9}, (_, index) => {
+                    <td>Class ${classNum}</td>
+                    ${Array.from({length: isFriday ? 6 : 9}, (_, index) => {
                         if(isFriday) {
-                            return index === 3 ? 
-                                '<td class="break">Short Break</td>' : 
-                                `<td id="class-${i}-${index < 3 ? index+1 : index}"></td>`;
+                            // Friday: P1, P2, Break, P3, P4, P5
+                            if(index === 2) return '<td class="break">Short Break</td>';
+                            const period = index < 2 ? index + 1 : index;
+                            return `<td id="class-${classNum}-${period}"></td>`;
+                        } else {
+                            // Regular days: P1, P2, Break, P3, P4, Lunch, P5, P6, P7
+                            if(index === 2) return '<td class="break">Short Break</td>';
+                            if(index === 5) return '<td class="break">Lunch Break</td>';
+                            const period = index < 2 ? index + 1 : index < 5 ? index : index - 1;
+                            return `<td id="class-${classNum}-${period}"></td>`;
                         }
-                        return index === 3 ? 
-                            '<td class="break">Short Break</td>' : 
-                            index === 6 ? 
-                            '<td class="break">Lunch Break</td>' : 
-                            `<td id="class-${i}-${index < 6 ? index+1 : index-1}"></td>`;
                     }).join('')}
                 `;
                 tbody.appendChild(row);
@@ -239,7 +228,6 @@
             cell.setAttribute("data-teacher", teacher);
             cell.setAttribute("data-subject", subject);
             cell.setAttribute("onclick", `editEntry('${cellId}')`);
-            
             highlightConflicts(teacher);
         }
 
@@ -368,7 +356,6 @@
             selectedCell = null;
         }
 
-        // Export/Import Functions
         function exportRoutine() {
             const routines = localStorage.getItem("routines");
             const dataStr = JSON.stringify(JSON.parse(routines), null, 2);
@@ -402,7 +389,7 @@
             });
         }
 
-        // Initialize on first load
+        // Initialize
         window.onload = () => {
             updatePeriodOptions();
             rebuildTableStructure();
