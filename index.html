@@ -46,7 +46,7 @@
 
     <!-- Form Controls -->
     <div class="row mb-3">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="teacher" class="form-label">Teacher:</label>
             <select id="teacher" class="form-select">
                 <option value="T1">T1</option>
@@ -56,7 +56,7 @@
                 <option value="T5">T5</option>
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="subject" class="form-label">Subject:</label>
             <select id="subject" class="form-select">
                 <option value="Math">Math</option>
@@ -66,7 +66,7 @@
                 <option value="Computer">Computer</option>
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="class" class="form-label">Class:</label>
             <select id="class" class="form-select">
                 <script>
@@ -76,15 +76,11 @@
                 </script>
             </select>
         </div>
-        <div class="col-md-3">
-            <label for="period" class="form-label">Period:</label>
-            <select id="period" class="form-select"></select>
-        </div>
     </div>
 
     <!-- Action Buttons -->
     <div class="mb-3">
-        <button class="btn btn-primary" onclick="addToRoutine()">Add to Routine</button>
+        <button class="btn btn-primary" onclick="addToRoutine()">Add Assignment</button>
         <button class="btn btn-warning" onclick="resetRoutine()">Reset Current Day</button>
         <button class="btn btn-success" onclick="saveRoutine()">Save All Routines</button>
         <button class="btn btn-info" onclick="exportRoutine()">Export All</button>
@@ -123,22 +119,8 @@
                 btn.textContent === day && btn.classList.add('active');
             });
             document.getElementById('currentDayHeading').textContent = `${day} Routine`;
-            updatePeriodOptions();
             rebuildTableStructure();
             loadRoutine();
-        }
-
-        function updatePeriodOptions() {
-            const periodSelect = document.getElementById('period');
-            periodSelect.innerHTML = '';
-            const periods = currentDay === 'Friday' ? 5 : 7;
-            
-            for(let i=1; i<=periods; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = `Period ${i}`;
-                periodSelect.appendChild(option);
-            }
         }
 
         function rebuildTableStructure() {
@@ -177,12 +159,10 @@
                     <td>Class ${classNum}</td>
                     ${Array.from({length: isFriday ? 6 : 9}, (_, index) => {
                         if(isFriday) {
-                            // Friday: P1, P2, Break, P3, P4, P5
                             if(index === 2) return '<td class="break">Short Break</td>';
                             const period = index < 2 ? index + 1 : index;
                             return `<td id="class-${classNum}-${period}"></td>`;
                         } else {
-                            // Regular days: P1, P2, Break, P3, P4, Lunch, P5, P6, P7
                             if(index === 2) return '<td class="break">Short Break</td>';
                             if(index === 5) return '<td class="break">Lunch Break</td>';
                             const period = index < 2 ? index + 1 : index < 5 ? index : index - 1;
@@ -194,61 +174,74 @@
             }
         }
 
+        function isTeacherAvailable(teacher, period) {
+            for (let classNum = 1; classNum <= 12; classNum++) {
+                const cellId = `class-${classNum}-${period}`;
+                const cell = document.getElementById(cellId);
+                if (cell && cell.getAttribute('data-teacher') === teacher) return false;
+            }
+            return true;
+        }
+
         function addToRoutine() {
             const teacher = document.getElementById("teacher").value;
             const subject = document.getElementById("subject").value;
             const classNumber = document.getElementById("class").value;
-            const period = document.getElementById("period").value;
+            const maxPeriod = currentDay === 'Friday' ? 5 : 7;
 
-            if(currentDay === 'Friday' && parseInt(period) > 5) {
-                alert("Friday only has 5 periods!");
-                return;
+            // Check for existing subject in class
+            for (let p = 1; p <= maxPeriod; p++) {
+                const cell = document.getElementById(`class-${classNumber}-${p}`);
+                if (cell && cell.getAttribute('data-subject') === subject) {
+                    alert(`Subject ${subject} already exists in Class ${classNumber}`);
+                    return;
+                }
             }
 
-            const cellId = `class-${classNumber}-${period}`;
-            const cell = document.getElementById(cellId);
-
-            if (!cell) {
-                alert("Invalid period selection!");
-                return;
+            // Find available slot
+            for (let period = 1; period <= maxPeriod; period++) {
+                const cellId = `class-${classNumber}-${period}`;
+                const cell = document.getElementById(cellId);
+                
+                if (cell && cell.innerHTML === "" && isTeacherAvailable(teacher, period)) {
+                    cell.innerHTML = `<b>${teacher}</b><br>${subject}`;
+                    cell.className = `subject-${subject.toLowerCase()}`;
+                    cell.setAttribute("data-teacher", teacher);
+                    cell.setAttribute("data-subject", subject);
+                    cell.setAttribute("onclick", `editEntry('${cellId}')`);
+                    highlightConflicts(teacher);
+                    return;
+                }
             }
-
-            if (cell.innerHTML !== "") {
-                alert("This period is already assigned!");
-                return;
-            }
-
-            if (checkTeacherConflict(teacher, period)) {
-                alert(`Conflict: Teacher ${teacher} is already assigned during this period!`);
-                return;
-            }
-
-            cell.innerHTML = `<b>${teacher}</b><br>${subject}`;
-            cell.className = `subject-${subject.toLowerCase()}`;
-            cell.setAttribute("data-teacher", teacher);
-            cell.setAttribute("data-subject", subject);
-            cell.setAttribute("onclick", `editEntry('${cellId}')`);
-            highlightConflicts(teacher);
-        }
-
-        function checkTeacherConflict(teacher, period) {
-            let conflict = false;
-            document.querySelectorAll(`[data-teacher="${teacher}"]`).forEach(cell => {
-                const cellPeriod = cell.id.split('-')[2];
-                if (cellPeriod === period) conflict = true;
-            });
-            return conflict;
+            alert("No available period without conflicts!");
         }
 
         function editEntry(cellId) {
             const cell = document.getElementById(cellId);
-            const teacher = cell.getAttribute("data-teacher");
-            const subject = cell.getAttribute("data-subject");
+            const oldTeacher = cell.getAttribute("data-teacher");
+            const oldSubject = cell.getAttribute("data-subject");
+            const [_, classNum, period] = cellId.split('-');
 
-            const newTeacher = prompt("Edit Teacher:", teacher);
-            const newSubject = prompt("Edit Subject:", subject);
+            const newTeacher = prompt("Edit Teacher:", oldTeacher);
+            const newSubject = prompt("Edit Subject:", oldSubject);
 
             if (newTeacher && newSubject) {
+                // Check teacher availability
+                if (newTeacher !== oldTeacher && !isTeacherAvailable(newTeacher, period)) {
+                    alert("Teacher not available in this period!");
+                    return;
+                }
+
+                // Check subject duplicate
+                const maxPeriod = currentDay === 'Friday' ? 5 : 7;
+                for (let p = 1; p <= maxPeriod; p++) {
+                    const checkCell = document.getElementById(`class-${classNum}-${p}`);
+                    if (checkCell && p != period && checkCell.getAttribute('data-subject') === newSubject) {
+                        alert("Subject already exists in another period!");
+                        return;
+                    }
+                }
+
                 cell.innerHTML = `<b>${newTeacher}</b><br>${newSubject}`;
                 cell.className = `subject-${newSubject.toLowerCase()}`;
                 cell.setAttribute("data-teacher", newTeacher);
@@ -375,7 +368,7 @@
             reader.onload = function(e) {
                 localStorage.setItem("routines", e.target.result);
                 loadRoutine();
-                alert('All routines imported successfully!');
+                alert('Routines imported successfully!');
             };
             reader.readAsText(file);
         });
@@ -391,7 +384,6 @@
 
         // Initialize
         window.onload = () => {
-            updatePeriodOptions();
             rebuildTableStructure();
             loadRoutine();
         };
