@@ -1,393 +1,410 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Routine Manager</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            text-align: center;
-        }
-        th, td {
-            padding: 10px;
-        }
-        .conflict {
-            background-color: #ffcccc;
-        }
-        .break {
-            background-color: lightgray;
-        }
-        .day-btn.active {
-            background-color: #007bff;
-            color: white;
-        }
-        .subject-math { background-color: #FFD700; }
-        .subject-science { background-color: #90EE90; }
-        .subject-english { background-color: #87CEEB; }
-        .subject-social { background-color: #FFB6C1; }
-        .subject-computer { background-color: #DDA0DD; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Routine Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      text-align: center;
+    }
+    th, td {
+      padding: 10px;
+    }
+    .conflict {
+      background-color: #ffcccc;
+    }
+    .break {
+      background-color: lightgray;
+    }
+    .day-btn.active {
+      background-color: #007bff;
+      color: white;
+    }
+    .subject-math { background-color: #FFD700; }
+    .subject-science { background-color: #90EE90; }
+    .subject-english { background-color: #87CEEB; }
+    .subject-social { background-color: #FFB6C1; }
+    .subject-computer { background-color: #DDA0DD; }
+    .assignment-list {
+      margin: 20px 0;
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+    #pendingAssignments {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body class="container mt-4">
+  <h2 class="text-center mb-4">School Routine Manager</h2>
 
-    <h2 class="text-center mb-4">School Routine Manager</h2>
+  <!-- Day Selection Buttons -->
+  <div class="btn-group mb-3">
+    <button class="btn btn-outline-primary day-btn active" onclick="switchDay('Sunday')">Sunday</button>
+    <button class="btn btn-outline-primary day-btn" onclick="switchDay('Monday')">Monday</button>
+    <button class="btn btn-outline-primary day-btn" onclick="switchDay('Tuesday')">Tuesday</button>
+    <button class="btn btn-outline-primary day-btn" onclick="switchDay('Wednesday')">Wednesday</button>
+    <button class="btn btn-outline-primary day-btn" onclick="switchDay('Thursday')">Thursday</button>
+    <button class="btn btn-outline-primary day-btn" onclick="switchDay('Friday')">Friday</button>
+  </div>
 
-    <!-- Day Selection Buttons -->
-    <div class="btn-group mb-3">
-        <button class="btn btn-outline-primary day-btn active" onclick="switchDay('Sunday')">Sunday</button>
-        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Monday')">Monday</button>
-        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Tuesday')">Tuesday</button>
-        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Wednesday')">Wednesday</button>
-        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Thursday')">Thursday</button>
-        <button class="btn btn-outline-primary day-btn" onclick="switchDay('Friday')">Friday</button>
+  <!-- Form Controls -->
+  <div class="row mb-3">
+    <div class="col-md-3">
+      <label for="teacher" class="form-label">Teacher:</label>
+      <select id="teacher" class="form-select">
+        <option value="" disabled selected>Select Teacher</option>
+        <option value="Ishwor sir">Ishwor sir</option>
+        <option value="Abin sir">Abin sir</option>
+        <option value="Manish sir">Manish sir</option>
+        <option value="Pradip sir">Pradip sir</option>
+        <option value="Lochan sir">Lochan sir</option>
+        <option value="Jhalanath sir">Jhalanath sir</option>
+        <option value="Arun sir">Arun sir</option>
+        <option value="Deepa mam">Deepa mam</option>
+      </select>
     </div>
+    <div class="col-md-3">
+      <label for="subject" class="form-label">Subject:</label>
+      <select id="subject" class="form-select">
+        <option value="" disabled selected>Select Subject</option>
+        <option value="Math">Math</option>
+        <option value="Science">Science</option>
+        <option value="English">English</option>
+        <option value="Social">Social</option>
+        <option value="Computer">Computer</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="class" class="form-label">Class:</label>
+      <select id="class" class="form-select">
+        <option value="" disabled selected>Select Class</option>
+        <script>
+          for(let i=1; i<=12; i++){
+            document.write(`<option value="${i}">Class ${i}</option>`);
+          }
+        </script>
+      </select>
+    </div>
+    <div class="col-md-3 align-self-end">
+      <button class="btn btn-primary" onclick="addToPending()">Add to List</button>
+    </div>
+  </div>
 
-    <!-- Form Controls -->
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label for="teacher" class="form-label">Teacher:</label>
-            <select id="teacher" class="form-select">
-                <option value="T1">T1</option>
-                <option value="T2">T2</option>
-                <option value="T3">T3</option>
-                <option value="T4">T4</option>
-                <option value="T5">T5</option>
-            </select>
+  <!-- Pending Assignments List -->
+  <div class="assignment-list">
+    <h5>Pending Assignments</h5>
+    <div id="pendingAssignments"></div>
+    <!-- The Auto-Schedule All button now calls autoScheduleAllDays() -->
+    <button class="btn btn-success" onclick="autoScheduleAllDays()">Auto-Schedule All</button>
+    <button class="btn btn-danger" onclick="clearPending()">Clear List</button>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="mb-3">
+    <button class="btn btn-warning" onclick="resetRoutine()">Reset Current Day</button>
+    <button class="btn btn-success" onclick="saveRoutine()">Save All Routines</button>
+    <button class="btn btn-info" onclick="exportRoutine()">Export All</button>
+    <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+    <input type="file" id="importFile" class="d-none" accept=".json">
+    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import</button>
+  </div>
+
+  <!-- Routine Table -->
+  <h3 id="currentDayHeading" class="mt-4">Sunday Routine</h3>
+  <table class="table table-bordered">
+    <thead id="tableHeader">
+      <!-- Table header will be built by rebuildTableStructure() -->
+    </thead>
+    <tbody id="routineBody">
+      <!-- Routine data will be built by rebuildTableStructure() -->
+    </tbody>
+  </table>
+
+  <!-- Context Menu (for future extension) -->
+  <div id="contextMenu" class="dropdown-menu">
+    <button class="dropdown-item" onclick="handleEdit()">Edit</button>
+    <button class="dropdown-item" onclick="handleDelete()">Delete</button>
+  </div>
+
+  <script>
+    let currentDay = 'Sunday';
+    let pendingAssignments = [];
+
+    // Ensure routines object exists in localStorage
+    if(!localStorage.getItem("routines")){
+      localStorage.setItem("routines", JSON.stringify({}));
+    }
+
+    // Switch day – auto-save current day's routine before switching.
+    function switchDay(day) {
+      saveRoutine();
+      currentDay = day;
+      document.querySelectorAll('.day-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.textContent === day) btn.classList.add('active');
+      });
+      document.getElementById('currentDayHeading').textContent = day + " Routine";
+      rebuildTableStructure();
+      loadRoutine();
+    }
+
+    // Rebuild table headers and body based on currentDay
+    function rebuildTableStructure() {
+      const isFriday = (currentDay === 'Friday');
+      const thead = document.getElementById('tableHeader');
+      const tbody = document.getElementById('routineBody');
+
+      // Build headers
+      thead.innerHTML = `
+        <tr>
+          <th>Class</th>
+          <th>Period 1</th>
+          <th>Period 2</th>
+          <th>Short Break</th>
+          ${isFriday ? `
+            <th>Period 3</th>
+            <th>Period 4</th>
+            <th>Period 5</th>
+          ` : `
+            <th>Period 3</th>
+            <th>Period 4</th>
+            <th>Lunch Break</th>
+            <th>Period 5</th>
+            <th>Period 6</th>
+            <th>Period 7</th>
+          `}
+        </tr>
+      `;
+
+      // Build body rows for Classes 1 to 12
+      tbody.innerHTML = '';
+      for(let classNum = 1; classNum <= 12; classNum++){
+        const row = document.createElement('tr');
+        row.id = `class-${classNum}`;
+        row.innerHTML = `
+          <td>Class ${classNum}</td>
+          ${Array.from({length: isFriday ? 6 : 9}, (_, index) => {
+            if(isFriday) {
+              if(index === 2) return '<td class="break">Short Break</td>';
+              const period = index < 2 ? index + 1 : index;
+              return `<td id="class-${classNum}-${period}"></td>`;
+            } else {
+              if(index === 2) return '<td class="break">Short Break</td>';
+              if(index === 5) return '<td class="break">Lunch Break</td>';
+              const period = index < 2 ? index + 1 : index < 5 ? index : index - 1;
+              return `<td id="class-${classNum}-${period}"></td>`;
+            }
+          }).join('')}
+        `;
+        tbody.appendChild(row);
+      }
+    }
+
+    // Load routine for the current day from localStorage
+    function loadRoutine() {
+      const routines = JSON.parse(localStorage.getItem("routines"));
+      if(routines && routines[currentDay]) {
+        const currentData = routines[currentDay];
+        const isFriday = (currentDay === 'Friday');
+        const maxPeriod = isFriday ? 5 : 7;
+        for(let classNum = 1; classNum <= 12; classNum++){
+          if(currentData[classNum]){
+            for(let p = 1; p <= maxPeriod; p++){
+              const cell = document.getElementById(`class-${classNum}-${p}`);
+              if(cell && currentData[classNum][p] !== undefined) {
+                cell.innerHTML = currentData[classNum][p];
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Save the current day's routine to localStorage
+    function saveRoutine() {
+      const routines = JSON.parse(localStorage.getItem("routines"));
+      const currentData = {};
+      const isFriday = (currentDay === 'Friday');
+      const maxPeriod = isFriday ? 5 : 7;
+      for(let classNum = 1; classNum <= 12; classNum++){
+        currentData[classNum] = {};
+        for(let p = 1; p <= maxPeriod; p++){
+          const cell = document.getElementById(`class-${classNum}-${p}`);
+          currentData[classNum][p] = cell ? cell.innerHTML : "";
+        }
+      }
+      routines[currentDay] = currentData;
+      localStorage.setItem("routines", JSON.stringify(routines));
+      // Note: The alert here may be omitted in auto scheduling for a smoother user experience.
+      // alert("Routine saved for " + currentDay + "!");
+    }
+
+    // Pending assignments functions
+    function addToPending() {
+      const teacher = document.getElementById("teacher").value;
+      const subject = document.getElementById("subject").value;
+      const classNum = document.getElementById("class").value;
+
+      if(!teacher || !subject || !classNum) {
+        alert("Please select all fields!");
+        return;
+      }
+
+      pendingAssignments.push({
+        teacher,
+        subject,
+        class: classNum,
+        scheduled: false
+      });
+
+      updatePendingDisplay();
+    }
+
+    function updatePendingDisplay() {
+      const container = document.getElementById("pendingAssignments");
+      container.innerHTML = pendingAssignments.map((a, index) => `
+        <div class="alert ${a.scheduled ? 'alert-success' : 'alert-secondary'}" role="alert">
+          ${a.teacher} - ${a.subject} - Class ${a.class}
+          ${!a.scheduled ? `<button class="btn btn-sm btn-danger float-end" onclick="removePending(${index})">X</button>` : ''}
         </div>
-        <div class="col-md-4">
-            <label for="subject" class="form-label">Subject:</label>
-            <select id="subject" class="form-select">
-                <option value="Math">Math</option>
-                <option value="Science">Science</option>
-                <option value="English">English</option>
-                <option value="Social">Social</option>
-                <option value="Computer">Computer</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="class" class="form-label">Class:</label>
-            <select id="class" class="form-select">
-                <script>
-                    for(let i=1; i<=12; i++) {
-                        document.write(`<option value="${i}">Class ${i}</option>`);
-                    }
-                </script>
-            </select>
-        </div>
-    </div>
+      `).join('');
+    }
 
-    <!-- Action Buttons -->
-    <div class="mb-3">
-        <button class="btn btn-primary" onclick="addToRoutine()">Add Assignment</button>
-        <button class="btn btn-warning" onclick="resetRoutine()">Reset Current Day</button>
-        <button class="btn btn-success" onclick="saveRoutine()">Save All Routines</button>
-        <button class="btn btn-info" onclick="exportRoutine()">Export All</button>
-        <input type="file" id="importFile" class="d-none" accept=".json">
-        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import</button>
-    </div>
+    function removePending(index) {
+      pendingAssignments.splice(index, 1);
+      updatePendingDisplay();
+    }
 
-    <!-- Routine Table -->
-    <h3 id="currentDayHeading" class="mt-4">Sunday Routine</h3>
-    <table class="table table-bordered">
-        <thead id="tableHeader">
-            <tr>
-                <th>Class</th>
-                <!-- Dynamic headers will be inserted here -->
-            </tr>
-        </thead>
-        <tbody id="routineBody">
-            <!-- Dynamic content will be inserted here -->
-        </tbody>
-    </table>
+    function clearPending() {
+      pendingAssignments = [];
+      updatePendingDisplay();
+    }
 
-    <!-- Context Menu -->
-    <div id="contextMenu" class="dropdown-menu">
-        <button class="dropdown-item" onclick="handleEdit()">Edit</button>
-        <button class="dropdown-item" onclick="handleDelete()">Delete</button>
-    </div>
-
-    <script>
-        let currentDay = 'Sunday';
-        let selectedCell = null;
-
-        function switchDay(day) {
-            currentDay = day;
-            document.querySelectorAll('.day-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.textContent === day && btn.classList.add('active');
-            });
-            document.getElementById('currentDayHeading').textContent = `${day} Routine`;
-            rebuildTableStructure();
-            loadRoutine();
-        }
-
-        function rebuildTableStructure() {
-            const isFriday = currentDay === 'Friday';
-            const thead = document.querySelector('#tableHeader');
-            const tbody = document.querySelector('#routineBody');
-
-            // Build headers
-            thead.innerHTML = `
-                <tr>
-                    <th>Class</th>
-                    <th>Period 1</th>
-                    <th>Period 2</th>
-                    <th>Short Break</th>
-                    ${isFriday ? `
-                        <th>Period 3</th>
-                        <th>Period 4</th>
-                        <th>Period 5</th>
-                    ` : `
-                        <th>Period 3</th>
-                        <th>Period 4</th>
-                        <th>Lunch Break</th>
-                        <th>Period 5</th>
-                        <th>Period 6</th>
-                        <th>Period 7</th>
-                    `}
-                </tr>
-            `;
-
-            // Build body
-            tbody.innerHTML = '';
-            for(let classNum=1; classNum<=12; classNum++) {
-                const row = document.createElement('tr');
-                row.id = `class-${classNum}`;
-                row.innerHTML = `
-                    <td>Class ${classNum}</td>
-                    ${Array.from({length: isFriday ? 6 : 9}, (_, index) => {
-                        if(isFriday) {
-                            if(index === 2) return '<td class="break">Short Break</td>';
-                            const period = index < 2 ? index + 1 : index;
-                            return `<td id="class-${classNum}-${period}"></td>`;
-                        } else {
-                            if(index === 2) return '<td class="break">Short Break</td>';
-                            if(index === 5) return '<td class="break">Lunch Break</td>';
-                            const period = index < 2 ? index + 1 : index < 5 ? index : index - 1;
-                            return `<td id="class-${classNum}-${period}"></td>`;
-                        }
-                    }).join('')}
-                `;
-                tbody.appendChild(row);
-            }
-        }
-
-        function isTeacherAvailable(teacher, period) {
-            for (let classNum = 1; classNum <= 12; classNum++) {
-                const cellId = `class-${classNum}-${period}`;
-                const cell = document.getElementById(cellId);
-                if (cell && cell.getAttribute('data-teacher') === teacher) return false;
-            }
-            return true;
-        }
-
-        function addToRoutine() {
-            const teacher = document.getElementById("teacher").value;
-            const subject = document.getElementById("subject").value;
-            const classNumber = document.getElementById("class").value;
-            const maxPeriod = currentDay === 'Friday' ? 5 : 7;
-
-            // Check for existing subject in class
-            for (let p = 1; p <= maxPeriod; p++) {
-                const cell = document.getElementById(`class-${classNumber}-${p}`);
-                if (cell && cell.getAttribute('data-subject') === subject) {
-                    alert(`Subject ${subject} already exists in Class ${classNumber}`);
-                    return;
-                }
-            }
-
-            // Find available slot
-            for (let period = 1; period <= maxPeriod; period++) {
-                const cellId = `class-${classNumber}-${period}`;
-                const cell = document.getElementById(cellId);
-                
-                if (cell && cell.innerHTML === "" && isTeacherAvailable(teacher, period)) {
-                    cell.innerHTML = `<b>${teacher}</b><br>${subject}`;
-                    cell.className = `subject-${subject.toLowerCase()}`;
-                    cell.setAttribute("data-teacher", teacher);
-                    cell.setAttribute("data-subject", subject);
-                    cell.setAttribute("onclick", `editEntry('${cellId}')`);
-                    highlightConflicts(teacher);
-                    return;
-                }
-            }
-            alert("No available period without conflicts!");
-        }
-
-        function editEntry(cellId) {
+    // Auto-schedule pending assignments across all days
+    function autoScheduleAllDays() {
+      // List of all days to schedule
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+      // Preserve the original day so we can restore it after processing
+      let originalDay = currentDay;
+      // Create a deep copy of the pending assignments, so that each day gets the same set.
+      const pendingCopy = JSON.parse(JSON.stringify(pendingAssignments));
+      
+      days.forEach(day => {
+        currentDay = day;
+        rebuildTableStructure();
+        loadRoutine();
+        const maxPeriod = (currentDay === 'Friday') ? 5 : 7;
+        pendingCopy.forEach(assignment => {
+          // Attempt to schedule the assignment into an available period.
+          // (We do not remove the assignment here since we want it scheduled in every day's routine.)
+          const periods = Array.from({length: maxPeriod}, (_, i) => i + 1)
+                              .sort(() => Math.random() - 0.5);
+          for(const period of periods){
+            const cellId = `class-${assignment.class}-${period}`;
             const cell = document.getElementById(cellId);
-            const oldTeacher = cell.getAttribute("data-teacher");
-            const oldSubject = cell.getAttribute("data-subject");
-            const [_, classNum, period] = cellId.split('-');
-
-            const newTeacher = prompt("Edit Teacher:", oldTeacher);
-            const newSubject = prompt("Edit Subject:", oldSubject);
-
-            if (newTeacher && newSubject) {
-                // Check teacher availability
-                if (newTeacher !== oldTeacher && !isTeacherAvailable(newTeacher, period)) {
-                    alert("Teacher not available in this period!");
-                    return;
-                }
-
-                // Check subject duplicate
-                const maxPeriod = currentDay === 'Friday' ? 5 : 7;
-                for (let p = 1; p <= maxPeriod; p++) {
-                    const checkCell = document.getElementById(`class-${classNum}-${p}`);
-                    if (checkCell && p != period && checkCell.getAttribute('data-subject') === newSubject) {
-                        alert("Subject already exists in another period!");
-                        return;
-                    }
-                }
-
-                cell.innerHTML = `<b>${newTeacher}</b><br>${newSubject}`;
-                cell.className = `subject-${newSubject.toLowerCase()}`;
-                cell.setAttribute("data-teacher", newTeacher);
-                cell.setAttribute("data-subject", newSubject);
-                highlightConflicts(newTeacher);
+            if(cell && cell.innerHTML === "" &&
+               isTeacherAvailable(assignment.teacher, period) &&
+               !isSubjectInClass(assignment.subject, assignment.class)) {
+              cell.innerHTML = `<b>${assignment.teacher}</b><br>${assignment.subject}`;
+              cell.className = `subject-${assignment.subject.toLowerCase()}`;
+              cell.setAttribute("data-teacher", assignment.teacher);
+              cell.setAttribute("data-subject", assignment.subject);
+              break; // Assignment scheduled for this day; move to next assignment.
             }
-        }
-
-        function resetRoutine() {
-            if (confirm("Reset current day's routine?")) {
-                const maxPeriod = currentDay === 'Friday' ? 5 : 7;
-                for (let i = 1; i <= 12; i++) {
-                    for (let j = 1; j <= maxPeriod; j++) {
-                        const cell = document.getElementById(`class-${i}-${j}`);
-                        if (cell) {
-                            cell.innerHTML = "";
-                            cell.removeAttribute("data-teacher");
-                            cell.removeAttribute("data-subject");
-                            cell.className = '';
-                        }
-                    }
-                }
-            }
-        }
-
-        function saveRoutine() {
-            const allRoutines = JSON.parse(localStorage.getItem("routines")) || {};
-            const routine = {};
-            const maxPeriod = currentDay === 'Friday' ? 5 : 7;
-
-            for (let i = 1; i <= 12; i++) {
-                routine[`Class ${i}`] = {};
-                for (let j = 1; j <= maxPeriod; j++) {
-                    const cell = document.getElementById(`class-${i}-${j}`);
-                    if (cell && cell.innerHTML !== "") {
-                        routine[`Class ${i}`][`Period ${j}`] = {
-                            teacher: cell.getAttribute("data-teacher"),
-                            subject: cell.getAttribute("data-subject")
-                        };
-                    }
-                }
-            }
-
-            allRoutines[currentDay] = routine;
-            localStorage.setItem("routines", JSON.stringify(allRoutines));
-            alert(`${currentDay} routine saved!`);
-        }
-
-        function loadRoutine() {
-            const allRoutines = JSON.parse(localStorage.getItem("routines")) || {};
-            const routine = allRoutines[currentDay] || {};
-            const maxPeriod = currentDay === 'Friday' ? 5 : 7;
-
-            for (let i = 1; i <= 12; i++) {
-                for (let j = 1; j <= maxPeriod; j++) {
-                    const cell = document.getElementById(`class-${i}-${j}`);
-                    if (!cell) continue;
-                    
-                    const periodData = routine[`Class ${i}`]?.[`Period ${j}`];
-                    if (periodData) {
-                        cell.innerHTML = `<b>${periodData.teacher}</b><br>${periodData.subject}`;
-                        cell.className = `subject-${periodData.subject.toLowerCase()}`;
-                        cell.setAttribute("data-teacher", periodData.teacher);
-                        cell.setAttribute("data-subject", periodData.subject);
-                    } else {
-                        cell.innerHTML = "";
-                        cell.className = '';
-                        cell.removeAttribute("data-teacher");
-                        cell.removeAttribute("data-subject");
-                    }
-                }
-            }
-        }
-
-        // Context Menu Functions
-        document.addEventListener('contextmenu', (e) => {
-            if (e.target.tagName === 'TD' && e.target.id.startsWith('class-')) {
-                e.preventDefault();
-                selectedCell = e.target;
-                const menu = document.getElementById('contextMenu');
-                menu.style.display = 'block';
-                menu.style.left = `${e.pageX}px`;
-                menu.style.top = `${e.pageY}px`;
-            }
+          }
         });
+        // Save the routine for this day
+        saveRoutine();
+      });
+      
+      // Restore the original day view
+      currentDay = originalDay;
+      rebuildTableStructure();
+      loadRoutine();
+      // Clear pending assignments once scheduled across all days.
+      pendingAssignments = [];
+      updatePendingDisplay();
+      alert("Auto scheduling complete for all days!");
+    }
 
-        function handleEdit() {
-            if (selectedCell) editEntry(selectedCell.id);
-            hideMenu();
-        }
+    // Check if a teacher is already scheduled in a given period (across all classes) for the current day
+    function isTeacherAvailable(teacher, period) {
+      for(let classNum = 1; classNum <= 12; classNum++){
+        const cell = document.getElementById(`class-${classNum}-${period}`);
+        if(cell && cell.getAttribute('data-teacher') === teacher) return false;
+      }
+      return true;
+    }
 
-        function handleDelete() {
-            if (selectedCell) {
-                selectedCell.innerHTML = '';
-                selectedCell.removeAttribute("data-teacher");
-                selectedCell.removeAttribute("data-subject");
-                selectedCell.className = '';
-                highlightConflicts('');
-            }
-            hideMenu();
-        }
+    // Check if a subject is already scheduled in the same class for the current day
+    function isSubjectInClass(subject, classNum) {
+      const maxPeriod = (currentDay === 'Friday') ? 5 : 7;
+      for(let p = 1; p <= maxPeriod; p++){
+        const cell = document.getElementById(`class-${classNum}-${p}`);
+        if(cell && cell.getAttribute('data-subject') === subject) return true;
+      }
+      return false;
+    }
 
-        function hideMenu() {
-            document.getElementById('contextMenu').style.display = 'none';
-            selectedCell = null;
-        }
+    // Reset the routine for the current day (clears the table)
+    function resetRoutine() {
+      if(confirm("Are you sure you want to reset the current day?")) {
+        rebuildTableStructure();
+      }
+    }
 
-        function exportRoutine() {
-            const routines = localStorage.getItem("routines");
-            const dataStr = JSON.stringify(JSON.parse(routines), null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'all_routines.json';
-            link.click();
-        }
+    // Export all routines stored in localStorage as a JSON file
+    function exportRoutine() {
+      const routines = localStorage.getItem("routines");
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(routines);
+      const a = document.createElement("a");
+      a.href = dataStr;
+      a.download = "routines.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
 
-        document.getElementById('importFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                localStorage.setItem("routines", e.target.result);
-                loadRoutine();
-                alert('Routines imported successfully!');
-            };
-            reader.readAsText(file);
-        });
+    // Clear all stored routines from localStorage and reset the table
+    function clearAllData() {
+      if(confirm("Are you sure you want to clear all data?")){
+        localStorage.removeItem("routines");
+        rebuildTableStructure();
+      }
+    }
 
-        function highlightConflicts(teacher) {
-            document.querySelectorAll('[data-teacher]').forEach(cell => {
-                cell.classList.remove('conflict');
-                if (cell.getAttribute('data-teacher') === teacher) {
-                    cell.classList.add('conflict');
-                }
-            });
-        }
+    // Import routines from a JSON file and load the current day routine
+    document.getElementById("importFile").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        localStorage.setItem("routines", event.target.result);
+        rebuildTableStructure();
+        loadRoutine();
+      };
+      reader.readAsText(file);
+    });
 
-        // Initialize
-        window.onload = () => {
-            rebuildTableStructure();
-            loadRoutine();
-        };
-    </script>
+    // Placeholder functions for context menu actions (for future extension)
+    function handleEdit() {
+      alert("Edit functionality not implemented.");
+    }
+    function handleDelete() {
+      alert("Delete functionality not implemented.");
+    }
 
+    // Initialize on page load
+    window.onload = () => {
+      if(!localStorage.getItem("routines")){
+        localStorage.setItem("routines", JSON.stringify({}));
+      }
+      rebuildTableStructure();
+      loadRoutine();
+    };
+  </script>
 </body>
 </html>
