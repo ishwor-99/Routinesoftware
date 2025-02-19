@@ -36,6 +36,12 @@
     #pendingAssignments {
       margin-top: 10px;
     }
+    footer {
+      font-style: italic;
+      margin-top: 30px;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
   </style>
 </head>
 <body class="container mt-4">
@@ -98,7 +104,7 @@
   <div class="assignment-list">
     <h5>Pending Assignments</h5>
     <div id="pendingAssignments"></div>
-    <!-- The Auto-Schedule All button now calls autoScheduleAllDays() -->
+    <!-- The Auto-Schedule All button now schedules for all days -->
     <button class="btn btn-success" onclick="autoScheduleAllDays()">Auto-Schedule All</button>
     <button class="btn btn-danger" onclick="clearPending()">Clear List</button>
   </div>
@@ -129,6 +135,11 @@
     <button class="dropdown-item" onclick="handleEdit()">Edit</button>
     <button class="dropdown-item" onclick="handleDelete()">Delete</button>
   </div>
+
+  <!-- Footer with credit -->
+  <footer class="text-center">
+    Software developed by Ishwor Bhattarai
+  </footer>
 
   <script>
     let currentDay = 'Sunday';
@@ -239,8 +250,6 @@
       }
       routines[currentDay] = currentData;
       localStorage.setItem("routines", JSON.stringify(routines));
-      // Note: The alert here may be omitted in auto scheduling for a smoother user experience.
-      // alert("Routine saved for " + currentDay + "!");
     }
 
     // Pending assignments functions
@@ -290,7 +299,7 @@
       const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
       // Preserve the original day so we can restore it after processing
       let originalDay = currentDay;
-      // Create a deep copy of the pending assignments, so that each day gets the same set.
+      // Create a deep copy of the pending assignments
       const pendingCopy = JSON.parse(JSON.stringify(pendingAssignments));
       
       days.forEach(day => {
@@ -300,7 +309,6 @@
         const maxPeriod = (currentDay === 'Friday') ? 5 : 7;
         pendingCopy.forEach(assignment => {
           // Attempt to schedule the assignment into an available period.
-          // (We do not remove the assignment here since we want it scheduled in every day's routine.)
           const periods = Array.from({length: maxPeriod}, (_, i) => i + 1)
                               .sort(() => Math.random() - 0.5);
           for(const period of periods){
@@ -313,7 +321,7 @@
               cell.className = `subject-${assignment.subject.toLowerCase()}`;
               cell.setAttribute("data-teacher", assignment.teacher);
               cell.setAttribute("data-subject", assignment.subject);
-              break; // Assignment scheduled for this day; move to next assignment.
+              break; // Move to the next assignment once scheduled for this day.
             }
           }
         });
